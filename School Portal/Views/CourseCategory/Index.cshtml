@@ -1,0 +1,186 @@
+﻿@model IEnumerable<School_Portal.Models.CourseCategory>
+@{
+	ViewData["Title"] = "Submit";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .tableHeader{
+        color:white !important;
+    }
+
+    .btttt {
+        color: #4c1864;
+    }
+</style>
+<!--Main container start -->
+<main class="ttr-wrapper">
+	<div class="container-fluid">
+		<div class="db-breadcrumb">
+			<h4 class="breadcrumb-title" style="margin-bottom:2px;">Course Category</h4>
+			<ul class="db-breadcrumb-list">
+				<li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+				<li>Course Category</li>
+			</ul>
+		</div>
+
+        <div class="text-lg-center">
+            <button data-bs-toggle="modal" type="button" data-bs-target="#myModal" class="btn bg-white" style="margin-left:88%; background-color:#4c1864!important; color:white !important;">Add Category</button>
+        </div>
+
+		<div class="row text-center pt-3" style="justify-content:center;">
+			<!-- Your Profile Views Chart -->
+			<div class="col-lg-10 m-b30">
+				<div class="widget-box">
+					<div class="text-lg-center">
+                        <h4><b>Course Category</b></h4>
+					</div>
+
+                    <table class="table table-striped table-bordered" style="width:98%; margin-left:1%;">
+                        <thead class="bg-primary-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                @foreach (var courseCategory in Model)
+                                {
+                                    <tr>
+                                        <td>@courseCategory.Name</td>
+                                        <td class="text-lg-center">
+                                            <a data-bs-toggle="modal" href="#" data-bs-target="#Edit_CourseCategory" onclick="GetCourseCategoryById('@courseCategory.Id')"><i class="ti-pencil"></i> </a>
+                                            @* <i class="ti-pencil"></i>  *@
+                                            <a href="#"  @* data-bs-target="#Delete_coursecategory" *@ onclick="DeleteCourseCategoryById('@courseCategory.Id')"><i class="ti-trash"></i> </a>
+                                            @* <i class="ti-trash"></i> *@
+                                        </td>
+                                       @*  <td>
+                                            <a asp-action="Edit"asp-route-id="@courseCategory.Id" class="btn btn-dark">Edit</a>
+                                            <a asp-action="Delete" asp-route-id="@courseCategory.Id" class="btn btn-danger">Delete</a>
+                                        </td> *@
+                                    </tr>
+                                }
+                            }
+                           
+                        </tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</main>
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="margin-left:160px;">
+                <h4 class="modal-title">Add category</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <form asp-controller="CourseCategory" asp-action="AddCourseCategory" method="post">
+                <div class="modal-body">
+                    <div class="col-12">
+                        <div  class="form-group">
+                            <label for="Name" class="col-form-label">Name:</label>
+                            <input class="form-control" type="text" asp-for="@Model.FirstOrDefault().Name" required>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="submit-section" style="margin-left:37%;">
+                        <button style="background-color:#4c1864; color:white;" type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@* <div class="modal" id="Edit_CourseCategory">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="margin-left:160px;">
+                <h4 class="modal-title">Edit Course Category</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <form asp-controller="CourseCategory" asp-action="EditCourseCategory" method="post">
+                <div class="modal-body">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="Name" class="col-form-label">Name:</label>
+                            <input class="form-control" type="text" asp-for="@Model.FirstOrDefault().Name" required>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="submit-section" style="margin-left:37%;">
+                        <button style="background-color:#4c1864; color:white;" type="submit">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> *@
+
+<div class="modal" id="Edit_CourseCategory">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="margin-left:160px;">
+                <h4 class="modal-title">Edit Course Category</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+           
+            <div class="modal-body">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="Name" class="col-form-label">Name:</label>
+                        <input class="form-control" type="text" id="editcourseCategoryId" hidden>
+                        <input class="form-control" type="text" id="editcourseCategoryName" required>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="submit-section" style="margin-left:37%;">
+                    <button style="background-color:#4c1864; color:white;" type="submit" id="submit_Btn" onclick="EditcourseCategory()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="Delete_coursecategory">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="margin-left:160px;">
+                <h4 class="modal-title"style="text-align:center">Delete Course Category</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+           
+            <div class="modal-body">
+                <div class="text-center mb-4">Are you sure you want to delete</div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="Name" class="col-form-label">Name:</label>
+                    <input class="form-control" type="text" id="deletecourseCategoryId" hidden>
+                    <input class="form-control" type="text" id="deletecourseCategoryName" required>
+                            
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="submit-section" style="margin-left:37%;">
+                <button style="background-color:#4c1864; color:white;" type="submit" onclick="DeleteCourseCategory()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
