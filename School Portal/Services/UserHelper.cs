@@ -5,6 +5,7 @@ using School_Portal.Data;
 using School_Portal.Iservices;
 using School_Portal.Models;
 using School_Portal.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static School_Portal.Data.SchoolPortalEnums;
 
 namespace School_Portal.Services
@@ -74,7 +75,31 @@ namespace School_Portal.Services
 			courses.Insert(0, defaultVaule);
 			return courses;
 		}
-		public bool ApproveCourse(int courseId)
+
+		public List<ApplicationUser> GetTeacher()
+		{
+			var courses = new List<ApplicationUser>();
+			var defaultVaule = new ApplicationUser
+			{
+				Id = "",
+				FirstName = "Select"
+			};
+			//courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
+
+            courses = db.ApplicationUser.Where(s => s.Id != null && s.RoleName == "Teacher").ToList();
+            courses.Insert(0, defaultVaule);
+			return courses;
+		}
+        public List<ApplicationUser> GetTeacher2()
+        {
+            var courses = new List<ApplicationUser>();
+            
+            //courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
+
+            courses = db.ApplicationUser.Where(s => s.Id != null && !s.IsDeactiveted && s.RoleName == "Teacher").ToList();
+            return courses;
+        }
+        public bool ApproveCourse(int courseId)
 		{
 			if(courseId > 0)
 			{
@@ -157,6 +182,117 @@ namespace School_Portal.Services
 				return categories;
 			}
 			return categories;
-		}  
-	}
+		}
+        public async Task<ApplicationUser>? FindByEmailAsync(string email)
+        {
+            try
+            {
+                var user = await db.ApplicationUser
+                    .Where(s => s.Email == email && !s.IsDeactiveted)
+                    .FirstOrDefaultAsync().ConfigureAwait(false);
+                if (user != null)
+                {
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return null;
+        }
+        public async Task<ApplicationUser> CreateTeacherDetails(ApplicationViewModel userModel)
+        {
+            var user = new ApplicationUser();
+            user.UserName = userModel.Email;
+            user.Email = userModel.Email;
+            user.FirstName = userModel.FirstName;
+            user.LastName = userModel.LastName;
+            user.PhoneNumber = userModel.PhoneNumber;
+            user.RoleName = "Teacher";
+            user.DateRegistered = DateTime.Now;
+			user.Address = userModel.Address;
+            user.IsDeactiveted = false;
+            var createdUser = await _userManager.CreateAsync(user, userModel.Password).ConfigureAwait(false);
+            if (createdUser.Succeeded)
+            {
+               var isAddedToRole = await _userManager.AddToRoleAsync(user, "Teacher");
+				if (isAddedToRole.Succeeded)
+				{
+                    return user;
+                }
+                return user;
+            }
+           return null;
+        }
+		
+		
+		
+		public async Task<ApplicationUser> CreateAdminDetails(ApplicationViewModel userModel)
+        {
+            var user = new ApplicationUser();
+            user.UserName = userModel.Email;
+            user.Email = userModel.Email;
+            user.FirstName = userModel.FirstName;
+            user.LastName = userModel.LastName;
+            user.PhoneNumber = userModel.PhoneNumber;
+            user.DateRegistered = DateTime.Now;
+			user.Address = userModel.Address;
+            user.IsDeactiveted = false;
+			user.RoleName = "Admin";
+            var createdUser = await _userManager.CreateAsync(user, userModel.Password).ConfigureAwait(false);
+            if (createdUser.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+                return user;
+            }
+           return null;
+        }
+        public List<ApplicationUser> GetTeacherName()
+        {
+            var courses = new List<ApplicationUser>();
+            courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
+            return courses;
+        }
+
+        public async Task<List<ApplicationUser>> GetTeacherNamesAsync()
+        {
+			try
+			{
+                var activeUsers = await db.ApplicationUser
+                             .Where(s => s.Id != null && !s.IsDeactiveted)
+                             .ToListAsync()
+                             .ConfigureAwait(false);
+
+                var teachers = new List<ApplicationUser>();
+
+                foreach (var user in activeUsers)
+                {
+                    var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                    if (roles.Contains("Teacher"))
+                    {
+                        teachers.Add(user);
+                    }
+                }
+
+                return teachers;
+            }
+			catch (Exception ex)
+			{
+
+				throw ex;
+			}
+        }
+
+        public ApplicationUser GetTeacherById(string userId)
+        {
+            var teacher = db.ApplicationUser.Where(s => s.Id == userId && !s.IsDeactiveted && s.RoleName == "Teacher").FirstOrDefault();
+            if (teacher != null)
+            {
+                return teacher;
+            }
+            return null;
+        }
+
+    }
 }

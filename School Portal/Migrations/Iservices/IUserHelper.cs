@@ -14,7 +14,13 @@ namespace School_Portal.Iservices
         List<Course> GetCourses();
         List<ApplicationUser> GetUsers();
         List<CourseCategory> GetCourseCategory();
-
-
-	}
+        Task<ApplicationUser>? FindByEmailAsync(string email);
+        Task<ApplicationUser> CreateTeacherDetails(ApplicationViewModel userModel);
+        Task<ApplicationUser> CreateAdminDetails(ApplicationViewModel userModel);
+        List<ApplicationUser> GetTeacher();
+        List<ApplicationUser> GetTeacherName();
+        ApplicationUser GetTeacherById(string userId);
+        Task<List<ApplicationUser>> GetTeacherNamesAsync();
+        List<ApplicationUser> GetTeacher2();
+    }
 }

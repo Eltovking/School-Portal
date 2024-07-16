@@ -12,9 +12,13 @@ namespace School_Portal.Models
         public string? Address { get; set; }    
         public DateTime? DateRegistered { get; set; }    
         public bool IsDeactiveted { get; set; }
+        public string? RoleName { get; set; }
         [NotMapped]
         public string? Password { get; set; }
-       // public UserStatus UserStatus { get; set; }
-
-	}
+        [NotMapped]
+        public string? Role { get; set; }
+        [NotMapped]
+        public string? FullName => FirstName + " " + LastName;
+        // public UserStatus UserStatus { get; set; }
+    }
 }

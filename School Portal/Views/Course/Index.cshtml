@@ -43,6 +43,10 @@
                                         <div class="card-courses-title">
                                             <h4>@course.Name</h4>
                                         </div>
+                                        <div class="card-courses-teacher">
+                                             <h6>Teacher</h6>
+                                            <p>@course.Teacher?.FullName</p>
+                                        </div>
                                         <div class="card-courses-list-bx">
                                             <ul class="card-courses-view">
                                                 <li class="card-courses-user">Category: @course.CourseCategory?.Name</li>
@@ -57,7 +61,7 @@
                                                 <p>@course.Description </p>
                                             </div>
                                             <div class="col-md-12">
-                                                 @* here i make a conditional statement to check when the status enum of remove button is clicked then other remains to be shown  *@
+                                                 @* here i make a conditional statement to check when the status enum of remove button is clicked then other buttons+ remains to be shown  *@
                                                 @if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Remove)
                                                 {
                                                     <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
