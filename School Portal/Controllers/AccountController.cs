@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using School_Portal.Data;
+using School_Portal.Iservices;
 using School_Portal.Models;
 using School_Portal.ViewModels;
 
@@ -12,11 +13,13 @@ namespace School_Portal.Controllers
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly AppDbContext db;
-		public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, AppDbContext dbContext)
+		private readonly IUserHelper _userHelper;
+		public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, AppDbContext dbContext, IUserHelper userHelper)
 		{
 			_signInManager = signInManager;
 			_userManager = userManager;
 			db = dbContext;
+			_userHelper = userHelper;
 		}
 
 		[HttpGet]
@@ -47,30 +50,27 @@ namespace School_Portal.Controllers
 
 
 		[HttpPost]
-		public JsonResult Register(string userDetails)
+		public async Task<JsonResult> RegisterAdmin(string userDetails)
 		{
 			if (userDetails == null)
 			{
 				return Json(new { isError = true, msg = "Your information is required" });
 			}
-			var applicationUserViewModel = JsonConvert.DeserializeObject<ApplicationViewModel>(userDetails);
-				
-			var application =new ApplicationUser();
-			application.Email = applicationUserViewModel.Email;
-			application.PhoneNumber = applicationUserViewModel.PhoneNumber;
-			application.LastName = applicationUserViewModel.LastName;
-			application.FirstName = applicationUserViewModel.FirstName;
-			application.UserName = applicationUserViewModel.Email;
-
-            var userManager =  _userManager.CreateAsync(application, applicationUserViewModel.Password).Result;
-			if (userManager.Succeeded)
+			var applicationUser = JsonConvert.DeserializeObject<ApplicationViewModel>(userDetails);
+			if(applicationUser != null)
 			{
-				return Json(new { isError = false, msg = "Registration successful" });
-			}
-			else
-			{
-				return Json(new { isError = true, msg = "Unable to Register" });
-			}
+                var checkForEmail = await _userHelper.FindByEmailAsync(applicationUser.Email).ConfigureAwait(false);
+                if (checkForEmail != null)
+                {
+                    return Json(new { isError = true, msg = "Email already exists" });
+                }
+                var createStaff = await _userHelper.CreateAdminDetails(applicationUser).ConfigureAwait(false);
+                if (createStaff != null)
+                {
+                    return Json(new { isError = false, msg = "Admin created successfully" });
+                }
+            }
+			return Json(new { isError = true, msg = "Unable to Register" });
 		}
 
 

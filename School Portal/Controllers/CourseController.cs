@@ -22,16 +22,19 @@ namespace School_Portal.Controllers
         public IActionResult Index()
 		{
             var courses = _db.Courses
-                .Where(x => x.CategoryId != 0 && x.Name != null && x.IsActive)
+                .Where(x =>  x.Name != null && x.IsActive)
                 .Include(v=>v.CourseCategory)
+                .Include(y => y.Teacher)
                 .ToList();
-            return View(courses);
-            
+            return View(courses);            
 		}
+
         [HttpGet]
         public IActionResult AddCourse()
         {
             ViewBag.Categories = _userHelper.GetCourseCategories();
+            ViewBag.Teacher = _userHelper.GetTeacher();
+            //ViewBag.Categories = _userHelper.GetCourseTeacher();
             return View();
         }
 
@@ -56,6 +59,7 @@ namespace School_Portal.Controllers
                 dimma.Name = data.Name;
                 dimma.Image = imageDataUrl;
                 dimma.Price = data.Price;
+                dimma.TeacherId = data.TeacherId;
                 dimma.Description = data.Description;
                 dimma.CategoryId = data.CategoryId;
                 dimma.IsActive = true;
@@ -135,16 +139,20 @@ namespace School_Portal.Controllers
             }
         }
 		[HttpGet]
-		public IActionResult EditCourse(int? courseId)
-		{
+	
+        public IActionResult EditCourse(int? courseId)
+        {
             var courseViewModel = new CourseViewModelEdit();
-           
+            ViewBag.Teacher = _userHelper.GetTeacher();
             ViewBag.Categories = _userHelper.GetCourseCategories();
             if (courseId == 0)
             {
                 return RedirectToAction("Index");
             }
-            var course = _db.Courses.Where(y => y.Id == courseId && y.IsActive).Include(c=>c.CourseCategory).FirstOrDefault();
+            var course = _db.Courses.Where(y => y.Id == courseId && y.IsActive)
+                .Include(c => c.CourseCategory)
+                .Include(p => p.Teacher)
+                .FirstOrDefault();
             if (course != null)
             {
                 courseViewModel.Id = course.Id;
@@ -154,27 +162,49 @@ namespace School_Portal.Controllers
                 courseViewModel.Image = course.Image;
                 courseViewModel.CategoryId = course.Id;
                 courseViewModel.Name = course.Name;
+                courseViewModel.TeacherId = course.TeacherId;
+
+                // Initialize Teacher property
+                courseViewModel.Teacher = new ApplicationUser(); 
+                courseViewModel.Teacher.FirstName = course.Teacher?.FirstName;
+                courseViewModel.Teacher.LastName = course.Teacher?.LastName;
             }
             return View(courseViewModel);
-		}
+        }
+
         [HttpPost]
-        public IActionResult EditedCourse(CourseViewModel data)
+        public async Task<IActionResult> EditedCourse(CourseViewModel data)
         {
+            var imageDataUrl = "";
             if (data != null)
             {
+
+                if (data.Image != null)
+                {
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await data.Image.CopyToAsync(memoryStream);
+                        byte[] imageBytes = memoryStream.ToArray();
+
+                        // Convert byte array to Base64 string
+                        string ConvertedImage = Convert.ToBase64String(imageBytes);
+                        imageDataUrl = string.Format("data:image/jpeg;base64,{0}", ConvertedImage);
+                    }
+                }
+
                 var course = _db.Courses.Where(y => y.Id == data.Id && y.IsActive).FirstOrDefault();
-                
                 course.Name = data.Name;
                 course.Description = data.Description;
                 course.Price = data.Price;
-                course.CategoryId = data.Id;
+                course.Image = imageDataUrl;
                 course.CategoryId = data.CategoryId;
+                course.TeacherId = data.TeacherId;
                 _db.Courses.Update(course);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(data);
-           
         }
 
 

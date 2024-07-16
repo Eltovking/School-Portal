@@ -33,7 +33,7 @@
 
             .form-group input[type="text"],
             .form-group input[type="number"],
-            .form-group select {
+            .form-group {
                 width: 100%;
                 padding: 8px;
                 box-sizing: border-box;
@@ -81,16 +81,23 @@
                                 <input type="number" asp-for="Price" name="price" required>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group" style="margin-bottom: 20px;">
                                 <label for="image" style="font-size: 1.2em;">Image</label>
                                 <input type="file" asp-for="Image" name="image" accept="image/*" class="form-control-file" style="font-size: 1.2em;" onchange="previewImage(event)">
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group" style="margin-bottom: 20px;">
                                 <label for="Category" style="font-size: 1.2em;">Category</label>
                                 <select asp-for="CategoryId" name="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control" style="width: 100%; padding: 10px; font-size: 1.2em;" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Teachers</label>
+                                <select asp-for="TeacherId" name="TeacherId" asp-items="@(new SelectList(ViewBag.Teacher, "Id", "FirstName"))" class="form-control select" style="width:100%;" required>
                                 </select>
                             </div>
                         </div>
@@ -105,7 +112,7 @@
 
                         <div class="col-sm-12 pt-2">
                             <div class="form-group text-center">
-                                <button type="submit">Edit Course</button>
+                                <button type="submit">Submit</button>
                             </div>
                         </div>
                     </div>

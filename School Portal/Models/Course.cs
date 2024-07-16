@@ -13,7 +13,11 @@ namespace School_Portal.Models
 		public IFormFile? LessonNote { get; set; }
 		public virtual CourseCategory? CourseCategory { get; set; }
         public string? Description { get; set; }
-	}
+        [ForeignKey(nameof(TeacherId))]
+        public string? TeacherId { get; set; }
+        public virtual ApplicationUser? Teacher { get; set; }
+
+    }
 
     public class Course : BaseModel
     {
@@ -24,5 +28,8 @@ namespace School_Portal.Models
         public int? CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public virtual CourseCategory? CourseCategory { get; set; }
+        public string? TeacherId { get; set; }
+        [ForeignKey("TeacherId")]
+        public virtual ApplicationUser? Teacher { get; set; }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace School_Portal.Data
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using School_Portal.Models;
+
+namespace School_Portal.Data
 {
 	//enum is usually at where enum class are constant
 	// Below i created enum for course as CourseStatus and set approve button to 1 while Remove botton to 2
@@ -24,3 +27,4 @@
 		}
 	}
 }
+
