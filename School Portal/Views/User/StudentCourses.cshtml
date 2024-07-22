@@ -1,18 +1,8 @@
 ﻿@model IEnumerable<School_Portal.Models.Course>
-
-
 @{
     ViewData["Title"] = "Courses";
-
-    if (User.IsInRole("Admin"))
-    {
-        Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    }
-    else
-    {
-        Layout = "~/Views/Shared/_UserLayout.cshtml";
-    }
-}
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+  }
 <main class="ttr-wrapper">
     <div class="container-fluid">
         <div class="db-breadcrumb">
@@ -51,7 +41,7 @@
                                             <h4>@course.Name</h4>
                                         </div>
                                         <div class="card-courses-teacher">
-                                             <h6>Teacher</h6>
+                                            <h6>Teacher</h6>
                                             <p>@course.Teacher?.FullName</p>
                                         </div>
                                         <div class="card-courses-list-bx">
@@ -68,25 +58,10 @@
                                                 <p>@course.Description </p>
                                             </div>
                                             <div class="col-md-12">
-                                                 @* here i make a conditional statement to check when the status enum of remove button is clicked then other buttons+ remains to be shown  *@
-                                                @if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Remove)
-                                                {
-                                                    <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
-                                                    <a asp-controller="Course" asp-action="DeleteCourse" asp-route-courseId="@course.Id" class="btn red outline radius-xl">Delete</a>
-                                                    <a asp-controller="Course" asp-action="ApproveCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Approve</a>
-                                                }else if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Approve)
-                                                {
-                                                    <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
-                                                    <a asp-controller="Course" asp-action="DeleteCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Delete</a>
-                                                    <a asp-controller="Course" asp-action="RemoveCourse" asp-route-courseId="@course.Id" class="btn red outline radius-xl ">Decline</a>
-                                                }
-                                                else
-                                                {
-                                                    <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
-                                                    <a asp-controller="Course" asp-action="DeleteCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Delete</a>
-                                                    <a asp-controller="Course" asp-action="ApproveCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Approve</a>
-                                                    <a asp-controller="Course" asp-action="RemoveCourse" asp-route-courseId="@course.Id" class="btn red outline radius-xl ">Decline</a>
-                                                }
+                                                @* here i make a conditional statement to check when the status enum of remove button is clicked then other buttons+ remains to be shown  *@
+                                                <a data-bs-toggle="modal" type="botton" data-bs-target="#ViewMore" class="btn green radius-xl outline" 
+                                                onclick="getCourse(@course.Id)">View more</a>
+                                                <a  class="btn green radius-xl outline" onclick="CoursePayment(@course.Id)">Buy now</a>
                                             </div>
                                         </div>
 
@@ -97,11 +72,29 @@
                         }
 
                     }
-                   
+
                 </div>
             </div>
             <!-- Your Profile Views Chart END-->
         </div>
-       
+
     </div>
 </main>
+
+
+<div class="modal" id="ViewMore">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="margin-left:160px;">
+                @* <h4 class="modal-title">Add Teacher</h4> *@
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body" id="viewMore-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+

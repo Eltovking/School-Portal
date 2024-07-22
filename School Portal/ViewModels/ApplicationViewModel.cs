@@ -16,6 +16,8 @@ namespace School_Portal.ViewModels
         public string? Role { get; set; }
         public string? UserName { get; set; }
 		public string? Address { get; set; }
-		public string? FullName => FirstName + " " + LastName; 
+		public string? FullName => FirstName + " " + LastName;
+		public string? DOB { get; set; }
+		public string? StateOfOrigin { get; set; }
 	}
 }

@@ -18,6 +18,8 @@ namespace School_Portal.Models
         [NotMapped]
         public string? Role { get; set; }
         [NotMapped]
+        public string? DOB {  get; set; }
+        public string? StateOfOrigin {  get; set; }
         public string? FullName => FirstName + " " + LastName;
         // public UserStatus UserStatus { get; set; }
     }

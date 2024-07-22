@@ -1,0 +1,49 @@
+﻿@model IEnumerable<School_Portal.ViewModels.PaymentViewModel>
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container mt-4 text-center">
+    <h2>Payment Details</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>CourseName</th>
+                <th>Price</th>
+                <th>Created Date</th>
+                <th>Status</th>
+                <th>IsApproved</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model != null && Model.Count() > 0)
+            {
+                @foreach (var payment in Model)
+                {
+                    <tr>
+                        <td>@payment.Id</td>
+                        <td>@payment.CourseName</td>
+                        <td>@payment.CoursePrice</td>
+                        <td>@payment.CreatedDate.ToString("D")</td>
+                        <td>@payment.IsApproved</td>
+                        <td>
+                            @if (@payment.IsApproved == true)
+                            {
+                                <span class="badge badge-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-success"> Pending</span>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            }
+           
+        </tbody>
+    </table>
+</div>

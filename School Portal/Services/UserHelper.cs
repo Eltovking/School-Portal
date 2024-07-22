@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using School_Portal.Data;
 using School_Portal.Iservices;
+using School_Portal.Migrations;
 using School_Portal.Models;
 using School_Portal.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -86,7 +87,7 @@ namespace School_Portal.Services
 			};
 			//courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
 
-            courses = db.ApplicationUser.Where(s => s.Id != null && s.RoleName == "Teacher").ToList();
+            courses = db.ApplicationUser.Where(s => s.Id != null && s.RoleName == "Teacher" && !s.IsDeactiveted).ToList();
             courses.Insert(0, defaultVaule);
 			return courses;
 		}
@@ -248,7 +249,31 @@ namespace School_Portal.Services
             }
            return null;
         }
-        public List<ApplicationUser> GetTeacherName()
+
+
+		public async Task<ApplicationUser> CreateStudentDetails(ApplicationViewModel userModel)
+		{
+			var user = new ApplicationUser();
+			user.UserName = userModel.Email;
+			user.Email = userModel.Email;
+			user.FirstName = userModel.FirstName;
+			user.LastName = userModel.LastName;
+			user.PhoneNumber = userModel.PhoneNumber;
+			user.DateRegistered = DateTime.Now;
+			user.Address = userModel.Address;
+			user.IsDeactiveted = false;
+			user.RoleName = "User";
+			user.DOB = userModel.DOB;
+			user.StateOfOrigin = userModel.StateOfOrigin;
+			var createdUser = await _userManager.CreateAsync(user, userModel.Password).ConfigureAwait(false);
+			if (createdUser.Succeeded)
+			{
+				await _userManager.AddToRoleAsync(user, "User");
+				return user;
+			}
+			return null;
+		}
+		public List<ApplicationUser> GetTeacherName()
         {
             var courses = new List<ApplicationUser>();
             courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
@@ -294,5 +319,120 @@ namespace School_Portal.Services
             return null;
         }
 
+
+		public ApplicationUser? GetUserByUserName(string? userName)
+		{
+			if (string.IsNullOrEmpty(userName))
+			{
+				return null;
+			}
+			else
+			{
+				var user = db.ApplicationUser.Where(x => x.UserName == userName).FirstOrDefault();
+				return user;
+			}
+		}
+
+		public bool UpdateProfile(ApplicationUser applicationUserFromForm, string userName)
+		{
+			try
+			{
+				if (applicationUserFromForm != null)
+				{
+					var user = GetUserByUserName(userName);
+					if (user != null)
+					{
+						user.FirstName = applicationUserFromForm.FirstName;
+						user.LastName = applicationUserFromForm.LastName;
+						user.Email = applicationUserFromForm.Email;
+						user.PhoneNumber = applicationUserFromForm.PhoneNumber;
+						db.Update(user);
+						db.SaveChanges();
+						return true;
+					}
+					return false;
+				}
+				else
+				{
+					return false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
+		}
+
+        public Course GetCourse(int courseId)
+        {
+            if (courseId > 0)
+            {
+                var appView = new Course();
+			   appView = db.Courses.Where(a => a.Id == courseId && a.IsActive).Include(x => x.CourseCategory)
+            .Select(a => new Course()
+            {
+                Description = a.Description,
+                Image = a.Image,
+                Name = a.Name,
+				Teacher = a.Teacher, 
+                Id = a.Id,
+                Price = a.Price,
+				CourseCategory = a.CourseCategory,
+				CategoryId = a.CategoryId,
+                
+            }).FirstOrDefault();
+
+                return appView;
+            }
+            return null;
+        } 
+		public GenericResponse IntiateCoursePayment(int courseId, string username)
+        {
+			var result = new GenericResponse();
+
+            var user = GetUserByUserName(username);
+			var checkUserPaidCourse = db.PaymentModels.Where(p => p.StudentId == user.Id && p.CourseId == courseId && p.IsActive).Any();// check if user have alerady pay this course previously using username and courseid
+			if (checkUserPaidCourse)
+			{
+				result.Message = "Course Previously Paid";
+				result.IsError = true;
+				return result;
+			}
+			if (courseId > 0 && user != null)
+            {
+				var payment = new PaymentModel();
+				payment.StudentId = user.Id;
+				payment.CourseId = courseId;
+				payment.CreatedDate = DateTime.Now;
+				payment.IsActive = true;
+                db.Add(payment);
+                db.SaveChanges();
+				result.Message = "payment submitted successfully";
+				result.IsError = false;
+                return result;
+            }
+			result.Message = "payment failed";
+            return result;
+        }
+
+
+
+        public List<PaymentViewModel> GetPaymentList(string userId)
+		{
+			var paymentViewModels = new List<PaymentViewModel>();
+			paymentViewModels = db.PaymentModels.Where(x => x.Id > 0 && x.StudentId == userId && x.IsActive).Include(x => x.Course)
+				.Select(x => new PaymentViewModel
+				{
+					Id = x.Id,
+					CourseName = x.Course.Name,
+					CoursePrice = x.Course.Price,
+					CreatedDate = x.CreatedDate,
+					IsActive = x.IsActive,
+					IsApproved = x.IsApproved,
+				}).ToList();
+			return paymentViewModels;
+		}
     }
 }
