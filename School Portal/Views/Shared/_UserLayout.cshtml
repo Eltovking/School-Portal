@@ -201,50 +201,29 @@
 			<nav class="ttr-sidebar-navi">
 				<ul>
 					<li>
-						<a asp-action ="Dashboard" asp-controller="Admin"class="ttr-material-button">
+						<a asp-action ="Index" asp-controller="User"class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-home"></i></span>
 							<span class="ttr-label">Dashborad</span>
 						</a>
 					</li>
 					<li>
-						<a asp-action="Index" asp-controller="CourseCategory" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-book"></i></span>
-							<span class="ttr-label">Course Category</span>
-						</a>
-					</li>
-					<li> 
-						<a asp-action="AddCourse" asp-controller="Course" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-book"></i></span>
-							<span class="ttr-label">Add Courses</span>
-						</a>
-					</li>
-					<li>
-						<a asp-action="Index" asp-controller="Course"class="ttr-material-button">
+						<a asp-action="StudentCourses" asp-controller="User" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-book"></i></span>
 							<span class="ttr-label">Courses</span>
 						</a>
 					</li>
 					<li>
-						<a asp-action="Teacher" asp-controller="Admin" class="ttr-material-button">
-							<span class="ttr-icon"><i class="fas fa-graduation-cap"></i></span>
-							<span class="ttr-label">Teacher</span>
-						</a>
-					</li>
-					<li>
-						<a asp-action="Payment" asp-controller="Admin" class="ttr-material-button">
-							<span class="ttr-icon"><i class="fas fa-credit-card"></i></span>
+						<a asp-action="Payment" asp-controller="User" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-book"></i></span>
 							<span class="ttr-label">Payment</span>
 						</a>
 					</li>
-					
-
-					
-					@* <li>
-						<a asp-action="Teacher" asp-controller="Admin" class="ttr-material-button">
+					<li>
+						<a asp-action="CourseMaterials" asp-controller="User" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-book"></i></span>
-							<span class="ttr-label">Teacher</span>
+							<span class="ttr-label">Course Materials</span>
 						</a>
-					</li> *@
+					</li>
 			
 				    @*  <li>
 						<a href="#" class="ttr-material-button">
@@ -303,11 +282,11 @@
 							<span class="ttr-label">Profile</span>
 							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
 						</a>
-						<ul>
+						@* <ul>
 							<li>
 								<a asp-action="ViewProfile" asp-controller="Admin" class="ttr-label">My Profile</a>
 							</li>
-						</ul>
+						</ul> *@
 					</li>
 
 					<li class="ttr-seperate"></li>

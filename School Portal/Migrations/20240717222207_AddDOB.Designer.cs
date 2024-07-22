@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using School_Portal.Data;
 
@@ -11,9 +12,10 @@ using School_Portal.Data;
 namespace School_Portal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240717222207_AddDOB")]
+    partial class AddDOB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,41 +294,6 @@ namespace School_Portal.Migrations
                     b.ToTable("CourseCategories");
                 });
 
-            modelBuilder.Entity("School_Portal.Models.PaymentModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("PaymentModels");
-                });
-
             modelBuilder.Entity("School_Portal.Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -419,23 +386,6 @@ namespace School_Portal.Migrations
                     b.Navigation("CourseCategory");
 
                     b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("School_Portal.Models.PaymentModel", b =>
-                {
-                    b.HasOne("School_Portal.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("School_Portal.Models.ApplicationUser", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 #pragma warning restore 612, 618
         }

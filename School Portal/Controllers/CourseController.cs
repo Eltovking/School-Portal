@@ -231,5 +231,41 @@ namespace School_Portal.Controllers
             return RedirectToAction("Index");
 
         }
+
+
+        public IActionResult GetCourseById(int CourseId)
+        {
+            try
+            {
+                if (CourseId > 0)
+                {
+                    var coursedetail = _userHelper.GetCourse(CourseId);
+                    return PartialView(coursedetail);
+                }
+                return Json(new { isError = true, msg = "could not find courses" });
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+        }
+        public IActionResult IntiateCoursePayment(int id)
+        {
+            try
+            {
+                if (id> 0)
+                {
+                    var coursedetail = _userHelper.IntiateCoursePayment(id,User.Identity.Name);
+                   
+                      return Json(new { isError = coursedetail.IsError, msg = coursedetail.Message });
+                }
+                return Json(new { isError = true, msg = "payment failed" });
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+        }
+      
     }
 }

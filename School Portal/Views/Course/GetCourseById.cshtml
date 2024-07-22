@@ -1,0 +1,42 @@
+﻿@model School_Portal.Models.Course
+
+<div class="m-auto">
+
+    <div class="card-header text-center">
+        <h3> Course Details: </h3>
+    </div>
+    @if (Model != null)
+    {
+        <div class="">
+            <div class="row">
+                <div class="col-12 mt-4">
+                    <img src="@Model.Image" />
+                </div>
+            </div>
+            <div class="col-6 text-center mt-3" style="margin-left:20%">
+                <p><b>Name:</b> <span id="Name">@Model.Name</span></p>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Price: <span id="Price">@Model.Price</span></p>
+                </div>
+               
+                <div class="col-6">
+                    <p>CourseCategory: <span id="CourseCategory">@Model.CourseCategory</span></p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <p>Teacher: <span id="Teacher">@Model.Teacher</span></p>
+                </div>
+                <div class="col-6">
+                    <p>Description: <span id="Description">@Model.Description</span></p>
+                </div>
+            </div>
+        </div>
+       @*  <div class="text-center">
+            <button type="button" class="btn btn-primary">Buy now</button>
+        </div> *@
+    }
+</div>

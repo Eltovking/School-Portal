@@ -19,8 +19,9 @@ function login() {
                 debugger
                 errorAlert(result.msg);
             } else {
-                var url = '/Admin/Dashboard';
-                successAlertWithRedirect(result.msg, url);
+               // var url = '/Admin/Dashboard';
+                //successAlertWithRedirect(url);
+                location.replace(result.dashboard);
             }
         },
         failure: function (response) {
@@ -66,6 +67,61 @@ function Registration() {
                 errorAlert(result.msg);
             } else {
                 var url = '/Admin/Dashboard';
+                successAlertWithRedirect(result.msg, url);
+            }
+        },
+        failure: function (response) {
+            alert(result.msg);
+        }
+    });
+}
+
+
+function RegisterStudent() {
+    debugger
+    var data = {};
+    data.FirstName = $('#firstname').val();
+    data.LastName = $('#lastname').val();
+    data.Email = $('#email').val();
+    data.Password = $('#password').val();
+    data.PhoneNumber = $('#phonenumber').val();
+    data.DOB = $('#DateOfBirth').val();
+    data.StateOfOrigin = $('#StateOfOrigin').val();
+    if (data.FirstName == "") {
+        return errorAlert("First name is required");
+    }
+    if (data.LastName == "") {
+        return errorAlert("Last name is required");
+    }
+    if (data.Email == "") {
+        return errorAlert("Email is required");
+    }
+    if (data.Password == "") {
+        return errorAlert("Password is required");
+    }
+    if (data.PhoneNumber == "") {
+        return errorAlert("Phone number is required");
+    }
+    if (data.DOB == "") {
+        return errorAlert("Date is required");
+    }
+    if (data.StateOfOrigin == "") {
+        return errorAlert("State of Origin required")
+    }
+    var userData = JSON.stringify(data);
+    $.ajax({
+        type: "POST",
+        url: "/Account/RegisterStudent",
+        dataType: "json",
+        data: {
+            userDetails: userData
+        },
+        success: function (result) {
+            if (result.isError) {
+                debugger
+                errorAlert(result.msg);
+            } else {
+                var url = '/Account/Login';
                 successAlertWithRedirect(result.msg, url);
             }
         },
@@ -306,4 +362,56 @@ function deleteTeacherById() {
         },
 
     });
+
+}
+
+
+function getCourse(CourseId) {
+    debugger;
+    $.ajax({
+        type: 'GET',
+        url: '/Course/GetCourseById',
+        data:
+        {
+            CourseId: CourseId
+        },
+        success: function (data) {
+            if (!data.isError) {
+                debugger;
+                $("#viewMore-body").html(data);
+                $("#ViewMorey").modal("show");
+
+            }
+        },
+    });
+}
+
+
+
+function CoursePayment(id) {
+    debugger;
+    if (id != "") {
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            url: '/Course/IntiateCoursePayment',
+            data:
+            {
+                id: id,
+            },
+            success: function (result) {
+                debugger;
+                if (!result.isError) {
+                    var url = window.location.href;
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    errorAlert(result.msg)
+                }
+            },
+
+        });
+    }
+   
+
 }

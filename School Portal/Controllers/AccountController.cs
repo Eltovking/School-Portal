@@ -27,29 +27,36 @@ namespace School_Portal.Controllers
 		{
 			return View();
 		}
-		//[HttpPost]
-		//public IActionResult RegisterUser(ApplicationUser data)
-		//{
-		//	if (!ModelState.IsValid)
-		//	{
-		//		return RedirectToAction("Register");
-		//	}
-		//	else
-		//	{
-		//		data.UserName = data.Email;
-		//		data.DateRegistered = DateTime.Now;
-		//		var registeredUser = _userManager.CreateAsync(data, data.Password).Result;
-		//		if (registeredUser.Succeeded)
-		//		{
-		//			return RedirectToAction("Index", "Admin");
-		//		}
-		//		return RedirectToAction("Register");
-
-		//	}
-		//}
 
 
-		[HttpPost]
+        [HttpGet]
+        public IActionResult RegisterAdmin()
+        {
+            return View();
+        }
+        //[HttpPost]
+        //public IActionResult RegisterUser(ApplicationUser data)
+        //{
+        //	if (!ModelState.IsValid)
+        //	{
+        //		return RedirectToAction("Register");
+        //	}
+        //	else
+        //	{
+        //		data.UserName = data.Email;
+        //		data.DateRegistered = DateTime.Now;
+        //		var registeredUser = _userManager.CreateAsync(data, data.Password).Result;
+        //		if (registeredUser.Succeeded)
+        //		{
+        //			return RedirectToAction("Index", "Admin");
+        //		}
+        //		return RedirectToAction("Register");
+
+        //	}
+        //}
+
+
+        [HttpPost]
 		public async Task<JsonResult> RegisterAdmin(string userDetails)
 		{
 			if (userDetails == null)
@@ -73,7 +80,29 @@ namespace School_Portal.Controllers
 			return Json(new { isError = true, msg = "Unable to Register" });
 		}
 
-
+		[HttpPost]
+		public async Task<JsonResult> RegisterStudent(string userDetails)
+		{
+			if (userDetails == null)
+			{
+				return Json(new { isError = true, msg = "Your information is required" });
+			}
+			var applicationUser = JsonConvert.DeserializeObject<ApplicationViewModel>(userDetails);
+			if (applicationUser != null)
+			{
+				var checkForEmail = await _userHelper.FindByEmailAsync(applicationUser.Email).ConfigureAwait(false);
+				if (checkForEmail != null)
+				{
+					return Json(new { isError = true, msg = "Email already exists" });
+				}
+				var createStudent = await _userHelper.CreateStudentDetails(applicationUser).ConfigureAwait(false);
+				if (createStudent != null)
+				{
+					return Json(new { isError = false, msg = "Student created successfully" });
+				}
+			}
+			return Json(new { isError = true, msg = "Unable to Register" });
+		}
 
 		[HttpGet]
 		public IActionResult Login()
@@ -103,7 +132,20 @@ namespace School_Portal.Controllers
 					var userSignIn = _signInManager.PasswordSignInAsync(user, password, true, false).Result;
 					if (userSignIn.Succeeded)
 					{
-                        return Json(new { isError = false });
+						var url = "";
+						var userRoles = _userManager.GetRolesAsync(user).Result;
+						if (userRoles != null)
+						{
+							if (userRoles.Contains("Admin"))
+							{
+								url = "/Admin/Dashboard";
+							}
+							else
+							{
+								url = "/User/Index";
+							}
+						}
+                        return Json(new { isError = false, dashboard = url });
                     }
 					else
 					{

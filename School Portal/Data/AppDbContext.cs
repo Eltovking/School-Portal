@@ -13,5 +13,6 @@ namespace School_Portal.Data
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseCategory> CourseCategories { get; set; }
+        public DbSet<PaymentModel> PaymentModels { get; set; }
     }
 }

@@ -33,18 +33,51 @@ namespace School_Portal.Controllers
 			return View(adminDataViewModel);
 		}
 		[HttpGet]
-		public IActionResult Profile(string id)
-		{
-			if (id != null)
+		public IActionResult Profile()
+		{		
+            string? currentLoggedInUsername = User?.Identity?.Name;
+
+            var user = _userHelper.GetUserByUserName(currentLoggedInUsername);
+			if (user != null) 
 			{
-				var user = _userHelper.GetUserById(id);
-				if (user != null) 
-				{
-					return View(user);
-				}
-            }
-			return View();
+				return View(user);
+			}
+            return View();
 		}
+        [HttpPost]
+		public IActionResult Profile(ApplicationUser UserDetail)
+		{
+			if (UserDetail == null)
+			{
+                return View();
+			}
+            else
+            {
+				string? currentLoggedInUsername = User?.Identity?.Name;
+				var hasProfileBeenUpdated = _userHelper.UpdateProfile( UserDetail, currentLoggedInUsername);
+                if (hasProfileBeenUpdated)
+                {
+                    return RedirectToAction("ViewProfile");
+                }
+			}
+            return View(UserDetail);
+          
+		}
+
+        [HttpGet]
+        public IActionResult ViewProfile()
+        {
+            string? currentLoggedInUsername = User?.Identity?.Name;
+
+            var user = _userHelper.GetUserByUserName(currentLoggedInUsername);
+            if (user != null)
+            {
+                return View(user);
+            }
+            return View();
+        }
+
+
 		[HttpGet]
 		public IActionResult Teacher()
 		{
@@ -137,5 +170,9 @@ namespace School_Portal.Controllers
             }
             return Json(new { isError = true, msg = "Not found" });
         }
-    }
+		public IActionResult Payment()
+		{
+			return View();
+		}
+	}
 }
