@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<School_Portal.ViewModels.PaymentViewModel>
 @{
     ViewData["Title"] = "Payment";
-    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+
 <style>
 
     body {
@@ -28,15 +29,16 @@
             </ul>
         </div>
         <div class="container mt-4 text-center">
-            <h2>Payment Details</h2>
+            <h2>Payments History</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>S/N</th>
+                        <th>StudentName</th>
                         <th>CourseName</th>
                         <th>Price</th>
                         <th>Created Date</th>
-                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,23 +48,20 @@
                         {
                             <tr>
                                 <td></td>
+                                <td>@payment.StudentName</td>
                                 <td>@payment.CourseName</td>
                                 <td>@payment.CoursePrice</td>
                                 <td>@payment.CreatedDate.ToString("D")</td>
-
                                 <td>
-                                    @if (payment.IsApproved == true)
+                                    @if (@payment.IsApproved == true)
                                     {
                                         <span class="badge badge-success">Approved</span>
                                     }
-                                    else if (payment.PaymentStatus.ToString() == "Decline")
-                                    {
-                                        <span style="background-color:#4c1864; color:white;">Decline </span>
-                                    }                                   
                                     else
                                     {
-                                        <span style="background-color:#4c1864; color:white;">Pending </span>
+                                        <span style="background-color:#4c1864; color:white;"> Decline </span>
                                     }
+
                                 </td>
                             </tr>
                         }
@@ -72,5 +71,4 @@
         </div>
     </div>
 </main>
-
 

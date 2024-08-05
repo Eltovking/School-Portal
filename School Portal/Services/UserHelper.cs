@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using School_Portal.Data;
 using School_Portal.Iservices;
-using School_Portal.Migrations;
 using School_Portal.Models;
 using School_Portal.ViewModels;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static School_Portal.Data.SchoolPortalEnums;
 
 namespace School_Portal.Services
 {
-	public class UserHelper : IUserHelper
+    public class UserHelper : IUserHelper
     {
 		private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext db;
@@ -91,7 +88,21 @@ namespace School_Portal.Services
             courses.Insert(0, defaultVaule);
 			return courses;
 		}
-        public List<ApplicationUser> GetTeacher2()
+
+		public List<Course> GetCoursesDropDown()
+		{
+			var courses = new List<Course>();
+			var defaultVaule = new Course
+			{
+				Id = 0,
+				Name = "Select"
+			};
+			courses = db.Courses.Where(s => s.Id != null && s.IsActive).ToList();
+			
+			courses.Insert(0, defaultVaule);	
+			return courses;
+		}
+		public List<ApplicationUser> GetTeacher2()
         {
             var courses = new List<ApplicationUser>();
             
@@ -388,26 +399,30 @@ namespace School_Portal.Services
             }
             return null;
         } 
-		public GenericResponse IntiateCoursePayment(int courseId, string username)
+		public GenericResponse IntiateCoursePayment(PaymentViewModel paymentViewModel, string username)
         {
 			var result = new GenericResponse();
 
             var user = GetUserByUserName(username);
-			var checkUserPaidCourse = db.PaymentModels.Where(p => p.StudentId == user.Id && p.CourseId == courseId && p.IsActive).Any();// check if user have alerady pay this course previously using username and courseid
+			var checkUserPaidCourse = db.PaymentModels.Where(p => p.StudentId == user.Id && p.CourseId == paymentViewModel.CourseId && p.PaymentStatus == PaymentStatus.Pending).Any();// check if user have alerady pay this course previously using username and courseid
 			if (checkUserPaidCourse)
 			{
-				result.Message = "Course Previously Paid";
+				result.Message = "Course is pending";
 				result.IsError = true;
 				return result;
 			}
-			if (courseId > 0 && user != null)
+			if (paymentViewModel != null  && user != null)
             {
 				var payment = new PaymentModel();
 				payment.StudentId = user.Id;
-				payment.CourseId = courseId;
+				payment.CourseId = paymentViewModel.CourseId;
 				payment.CreatedDate = DateTime.Now;
+				payment.IsActive = false;
+                payment.BankPaidFrom = paymentViewModel.BankPaidFrom;
+				payment.PaymentMethod = paymentViewModel.PaymentMethod;
+				payment.PaymentStatus = PaymentStatus.Pending;
 				payment.IsActive = true;
-                db.Add(payment);
+				db.Add(payment);
                 db.SaveChanges();
 				result.Message = "payment submitted successfully";
 				result.IsError = false;
@@ -418,21 +433,199 @@ namespace School_Portal.Services
         }
 
 
+        public async Task<List<PaymentViewModel>> GetLoggedInUserPaymentList(string userId)
+        {
+            try
+            {
+                var paymentViewModels = await db.PaymentModels
+                    .Where(x => x.StudentId == userId && x.IsActive )
+                    .Include(x => x.Course)
+                    .Select(x => new PaymentViewModel
+                    {
+                        Id = x.Id,
+                        CourseName = x.Course != null ? x.Course.Name : "Course",
+                        CoursePrice = x.Course != null ? x.Course.Price : 0,
+                        CreatedDate = x.CreatedDate,
+                        IsActive = x.IsActive,
+                        IsApproved = x.IsApproved,
+						PaymentStatus = x.PaymentStatus
+					})
+                    .ToListAsync();
 
-        public List<PaymentViewModel> GetPaymentList(string userId)
+                return paymentViewModels;
+            }
+            catch (Exception ex)
+            {
+                throw; // Rethrow the original exception without losing the stack trace
+            }
+        }
+
+
+
+		/// <summary>
+		///  In this method am trying to add a method for getting  all PENDING Payments from  the DB
+		/// </summary>
+		/// <returns></returns>
+		public List<PaymentViewModel> GetPendingPaymentList()
 		{
-			var paymentViewModels = new List<PaymentViewModel>();
-			paymentViewModels = db.PaymentModels.Where(x => x.Id > 0 && x.StudentId == userId && x.IsActive).Include(x => x.Course)
-				.Select(x => new PaymentViewModel
-				{
-					Id = x.Id,
-					CourseName = x.Course.Name,
-					CoursePrice = x.Course.Price,
-					CreatedDate = x.CreatedDate,
-					IsActive = x.IsActive,
-					IsApproved = x.IsApproved,
-				}).ToList();
+			List<PaymentViewModel> paymentViewModels = new List<PaymentViewModel>();
+			var pendingPayments = db.PaymentModels.Where(x => x.IsActive && x.PaymentStatus == PaymentStatus.Pending).Include(x => x.Course).Include(x => x.Student).ToList();
+
+			paymentViewModels = pendingPayments.Select(x => new PaymentViewModel
+
+			{
+				Id = x.Id,
+				CourseName = x.Course?.Name,
+				CoursePrice = x.Course?.Price,
+				CreatedDate = x.CreatedDate,
+				IsActive = x.IsActive,
+				IsApproved = x.IsApproved,
+				StudentName = x.Student?.FullName,
+			}).ToList();
+
 			return paymentViewModels;
 		}
+
+
+
+
+		public bool SavePayment(PaymentViewModel pay)
+		{
+			var payment = db.PaymentModels.FirstOrDefault(p => p.CourseId == pay.CourseId);
+			if (payment != null)
+			{
+				payment.PaymentMethod = pay.PaymentMethod;
+				payment.BankPaidFrom = pay.BankPaidFrom;
+				db.PaymentModels.Update(payment);
+				db.SaveChanges();
+				return true;
+			}
+			return false;
+		}
+		public List<PaymentViewModel> GetPaymentHistory()
+		{
+			var paymentViewModels = new List<PaymentViewModel>();
+			paymentViewModels = db.PaymentModels.Where(x => x.Id > 0 && x.IsActive && x.PaymentStatus == PaymentStatus.Approve || x.PaymentStatus == PaymentStatus.Decline).Include(x => x.Course).Include(x => x.Student)
+                .Select(x => new PaymentViewModel
+                {
+                    Id = x.Id,
+                    CourseName = x.Course.Name,
+                    CoursePrice = x.Course.Price,
+                    CreatedDate = x.CreatedDate,
+                    IsActive = x.IsActive,
+                    IsApproved = x.IsApproved,
+                    StudentName = x.Student.FullName,
+					PaymentStatus = x.PaymentStatus,
+                }).ToList();
+            return paymentViewModels;
+        }
+
+        public bool AddAnnouncements(AnnouncementViewModel announcenent, ApplicationUser loggedInUser)
+        {
+            if (announcenent != null)
+            {
+                var addAnnouncement = new Announcement()
+                {
+                    Title = announcenent?.Title,
+                    Description = announcenent?.Description,
+                    DurationFrom = announcenent.DurationFrom,
+                    DurationTill = announcenent.DurationTill,
+                    DateCreated = DateTime.Now,
+                    IsActive = true,
+                    IsDeleted = false,
+                    UserId = loggedInUser.Id,
+                };
+                db.Add(addAnnouncement);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public List<AnnouncementViewModel> ListofAnnouncementForAdmin()
+        {
+            var announcementViewModel = new List<AnnouncementViewModel>();
+            announcementViewModel = db.Announcements.Where(a => a.Id > 0 && a.IsActive == true && !a.IsDeleted)
+            .Select(a => new AnnouncementViewModel()
+            {
+                Title = a.Title,
+                Description = a.Description,
+                DurationFrom = a.DurationFrom,
+                DurationTill = a.DurationTill,
+                DateCreated = a.DateCreated,
+                Id = a.Id,
+            }).ToList();
+
+            return announcementViewModel;
+        }
+
+        public AnnouncementViewModel GetAnnouncement(int id)
+        {
+            var announceViewModel = new AnnouncementViewModel();
+			announceViewModel = db.Announcements.Where(a => a.Id == id && a.IsActive && !a.IsDeleted).Include(a => a.User)
+        .Select(a => new AnnouncementViewModel()
+        {
+            Title = a.Title,
+			UserId = a.UserId,
+            Description = a.Description,
+            DurationFrom = a.DurationFrom,
+            DurationTill = a.DurationTill,
+            DateCreated = a.DateCreated,
+            Id = a.Id,
+        }).FirstOrDefault();
+
+            return announceViewModel;
+        }
+
+        public bool EditAnnouncement(AnnouncementViewModel announcementdetails, ApplicationUser loggedInUser)
+        {
+            if (announcementdetails != null)
+            {
+                var editAnnoucement = db.Announcements.Where(x => x.Id == announcementdetails.Id && x.IsActive && !x.IsDeleted).FirstOrDefault();
+                if (editAnnoucement != null)
+                {
+                    editAnnoucement.Title = announcementdetails.Title;
+                    editAnnoucement.Description = announcementdetails.Description;
+                    editAnnoucement.DurationFrom = announcementdetails.DurationFrom;
+                    editAnnoucement.DurationTill = announcementdetails.DurationTill;
+                    editAnnoucement.UserId = loggedInUser.Id;
+
+                    db.Update(editAnnoucement);
+                    db.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteAnnounce(int id)
+        {
+            var announceToDelete = db.Announcements.Where(a => a.Id == id && !a.IsDeleted).FirstOrDefault();
+            if (announceToDelete != null)
+            {
+                announceToDelete.IsDeleted = true;
+                announceToDelete.IsActive = false;
+                db.Update(announceToDelete);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+        public List<AnnouncementViewModel> ListofAnnouncement()
+        {
+            var announcementViewModel = new List<AnnouncementViewModel>();
+            announcementViewModel = db.Announcements.Where(a => a.Id > 0 && a.IsActive && !a.IsDeleted && DateTime.Now.Date <= a.DurationTill.Date)
+            .Select(a => new AnnouncementViewModel()
+            {
+                Title = a.Title,
+                Description = a.Description,
+                DurationFrom = a.DurationFrom,
+                DurationTill = a.DurationTill,
+                DateCreated = a.DateCreated,
+                Id = a.Id,
+            }).ToList();
+
+            return announcementViewModel;
+        }
     }
 }

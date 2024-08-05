@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using School_Portal.Data;
@@ -13,7 +14,12 @@ builder.Services.AddScoped<IUserHelper, UserHelper>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("SchoolPortal")));
-
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue;
+    x.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {

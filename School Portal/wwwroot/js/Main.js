@@ -385,16 +385,47 @@ function getCourse(CourseId) {
         },
     });
 }
+function CoursePayment() {
+    debugger;
+    var data = {} ;
+    data.CourseId = $('#courseId').val();
+    data.PaymentMethod = $('#paymentMethod').val();
+    data.BankPaidFrom = $('#bankPaidFrom').val();
+    var userData = JSON.stringify(data);
+    if (data.CourseId != ""
+        && data.BankPaidFrom != ""
+        && data.PaymentMethod != "") {
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            url: '/Course/IntiateCoursePayment',
+            data:
+            {
+                userData: userData,
+            },
+            success: function (result)
+            {
+                debugger;
+                if (!result.isError)
+                {
+                    successAlertWithRedirect(result.msg, '/User/Index')
+                }
+                else
+                {
+                    errorAlert(result.msg)
+                }
+            },
+        });
+    }  
+}
 
-
-
-function CoursePayment(id) {
+function ApprovedPayment(id) {
     debugger;
     if (id != "") {
         $.ajax({
             type: 'Post',
             dataType: 'json',
-            url: '/Course/IntiateCoursePayment',
+            url: '/Admin/ApprovedCoursePayment',
             data:
             {
                 id: id,
@@ -412,6 +443,197 @@ function CoursePayment(id) {
 
         });
     }
-   
+
 
 }
+
+function DeclinePayment(id) {
+    debugger;
+    if (id != "") {
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            url: '/Admin/DeclinePayment',
+            data:
+            {
+                id: id,
+            },
+            success: function (result) {
+                debugger;
+                if (!result.isError) {
+                    var url = window.location.href;
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    errorAlert(result.msg)
+                }
+            },
+
+        });
+    }
+
+
+}
+function AddAnnouncement() {
+    var data = {};
+    data.Title = $('#Title').val();
+    data.description = $('#description').val();
+    data.DurationFrom = $('#dateFrom').val();
+    data.DurationTill = $('#dateTill').val();
+
+    if (data.Title != "" && data.description != "" && data.DurationFrom != "" && data.DurationTill != "") {
+
+        let details = JSON.stringify(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Admin/CreateAnnouncement',
+            dataType: 'json',
+            data:
+            {
+                details: details,
+
+            },
+            success: function (result) {
+                debugger;
+                if (!result.isError) {
+                    var url = '/Admin/Announcement';
+                    successAlertWithRedirect(result.msg, url);
+                }
+                else {
+                    errorAlert(result.msg);
+                }
+            },
+            error: function (ex) {
+                errorAlert("Please check and try again. Contact Admin if issue persists..");
+            }
+        });
+    }
+    else {
+        //$('#submit_btn').html(defaultBtnValue);
+        //$('#submit_btn').attr("disabled", false);
+        errorAlert("Please fill the form Correctly");
+    }
+
+}
+function GetAnnounceToEdit(id) {
+    $.ajax({
+        type: 'Get',
+        url: '/Admin/GetAnnounceToEdit',
+        dataType: 'json',
+        data:
+        {
+            id: id,
+        },
+        success: function (result) {
+            if (!result.isError) {
+                var durationFrom;
+                if (result.durationFrom != "0001-01-01T00:00:00") {
+                    var fromDate = result.durationFrom.split("T");
+                    durationFrom = fromDate[0];
+                } else {
+                    durationFrom = null;
+                }
+                var durationTill;
+                if (result.durationTill != "0001-01-01T00:00:00") {
+                    var tillDate = result.durationTill.split("T");
+                    durationTill = tillDate[0];
+                } else {
+                    durationTill = null;
+                }
+
+                $("#annouce_Id").val(result.id);
+                $("#edit_title").val(result.title);
+                $("#edit_description").val(result.description);
+
+                $("#edit_dateFrom").val(durationFrom);
+                $("#edit_dateTill").val(durationTill);
+                $("#announcementEditModal").modal("show");
+            }
+            else {
+                errorAlert(result.msg);
+            }
+        },
+        error: function (ex) {
+            errorAlert("An error occured, please try again.");
+        }
+    });
+}
+
+function SaveEditedAnnouncement() {
+    debugger;
+    var data = {};
+    data.Id = $('#annouce_Id').val();
+    data.Title = $('#edit_title').val();
+    data.Description = $('#edit_description').val();
+    data.DurationFrom = $('#edit_dateFrom').val();
+    data.DurationTill = $('#edit_dateTill').val();
+
+    if (data.Title != "" && data.Description != "" && data.DurationFrom != "" && data.DurationTill != "") {
+
+        let announcedetails = JSON.stringify(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Admin/SaveEditedAnnouncement',
+            dataType: 'json',
+            data:
+            {
+                announcedetails: announcedetails,
+
+            },
+            success: function (result) {
+                debugger
+                if (!result.isError) {
+                    var url = '/Admin/Announcement';
+                    successAlertWithRedirect(result.msg, url);
+                }
+                else {
+                    errorAlert(result.msg);
+                }
+            },
+            error: function (ex) {
+                errorAlert("Please check and try again. Contact Admin if issue persists..");
+            }
+        });
+    }
+    else {
+        errorAlert("Please fill the form Correctly");
+    }
+
+}
+
+
+function getAnnouncementToBeDelete(id)
+{
+    debugger;
+    $('#deleteAnnouce_Id').val(id);
+}
+
+
+function DeleteAnnounce(id) {
+    debugger;
+    var id = $('#deleteAnnouce_Id').val();
+    $.ajax({
+        type: 'Post',
+        dataType: 'Json',
+        url: '/Admin/DelAnnounce',
+        data: {
+            id: id
+        },
+        success: function (result) {
+            if (!result.isError) {
+                var url = '/Admin/Announcement'
+                successAlertWithRedirect(result.msg, url)
+            }
+            else {
+                errorAlert(result.msg)
+            }
+        },
+        error: function (ex) {
+            errorAlert("An error occured, please check and try again. Please contact admin if issue persists..");
+        }
+    })
+}
+
+
+
+

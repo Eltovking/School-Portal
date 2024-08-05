@@ -43,8 +43,8 @@
     <link href="~/template/admin/assets/css/style.css" rel="stylesheet" />
     <link href="~/template/admin/assets/css/dashboard.css" rel="stylesheet" />
     <link href="~/template/admin/assets/css/color/color-1.css" rel="stylesheet" />
-	<link href="~/css/sweetalert2.css" rel="stylesheet" />
-	<script>
+    <link href="~/css/sweetalert2.css" rel="stylesheet" />
+    <script>
 		function errorAlert(message) {
 			Swal.fire({
 				icon: 'error',
@@ -226,16 +226,47 @@
 					</li>
 					<li>
 						<a asp-action="Teacher" asp-controller="Admin" class="ttr-material-button">
-							<span class="ttr-icon"><i class="fas fa-graduation-cap"></i></span>
+							<span class="ttr-icon"><i class="ti-graduation-cap"></i></span>
 							<span class="ttr-label">Teacher</span>
 						</a>
 					</li>
 					<li>
-						<a asp-action="Payment" asp-controller="Admin" class="ttr-material-button">
-							<span class="ttr-icon"><i class="fas fa-credit-card"></i></span>
-							<span class="ttr-label">Payment</span>
+						<a asp-action="Payments" asp-controller="Admin" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-credit-card"></i></span>
+							<span class="ttr-label"> Confirm Payments</span>
 						</a>
 					</li>
+					<li>
+						<a asp-action="paymentHistory" asp-controller="Admin" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-credit-card"></i></span>
+							<span class="ttr-label">Payment History</span>
+						</a>
+					</li>
+					<li>
+						<a asp-action="Announcement" asp-controller="Admin" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-microphone"></i></span>
+							<span class="ttr-label">Announcement</span>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-user"></i></span>
+							<span class="ttr-label">Profile</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a asp-action="ViewProfile" asp-controller="Admin" class="ti-profile">My Profile</a>
+							</li>
+						</ul>
+					</li>
+
+					@* <li>
+						<a asp-action="adminCourseMaterials" asp-controller="Admin" class="ttr-material-button">
+							<span class="ttr-icon"><i class="fas fa-credit-card"></i></span>
+							<span class="ttr-label">Paid course Materials</span>
+						</a>
+					</li> *@
 					
 
 					
@@ -297,18 +328,7 @@
 							<span class="ttr-label">Add listing</span>
 						</a>
 					</li>  *@
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-							<span class="ttr-label">Profile</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						<ul>
-							<li>
-								<a asp-action="ViewProfile" asp-controller="Admin" class="ttr-label">My Profile</a>
-							</li>
-						</ul>
-					</li>
+					
 
 					<li class="ttr-seperate"></li>
 				</ul>

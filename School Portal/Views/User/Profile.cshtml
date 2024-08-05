@@ -1,15 +1,7 @@
 ﻿@model School_Portal.Models.ApplicationUser
 
 @{
-    ViewData["Title"] = "ViewProfile";
-}
-@if (User.IsInRole("Admin"))
-{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-}
-}
-else
-{
+    ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 <style>
@@ -42,7 +34,7 @@ else
             box-sizing: border-box;
         }
 
-            .form-group a {
+            .form-group button {
                 padding: 10px 15px;
                 background-color: #4c1864;
                 color: white;
@@ -51,7 +43,7 @@ else
                 cursor: pointer;
             }
 
-                .form-group a:hover {
+                .form-group button:hover {
                     background-color: #4c1864;
                 }
 
@@ -62,46 +54,44 @@ else
 <div class="container-fluid" style="margin-top: 10px;margin-left: 10%;padding-right: 20%;padding-left: 18%; padding-top:3%;">
     <div class="card">
         <div class="card-header text-white text-center">
-            <h2>View Profile</h2>
+            <h2>Profile</h2>
         </div>
-          <div class="card-body">
+        <div class="card-body">
+
+            <form asp-action="Profile" asp-controller="User" method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="FirstName">FirstName</label>
-                            <h6 type="text" asp-for="FirstName" name="FirstName">@Model.FirstName</h6>
+                            <input type="text" asp-for="FirstName" name="FirstName">
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="LastName">LastName</label>
-                        <h6 type="text" asp-for="LastName" name="LastName">@Model.LastName</h6>
+                            <input type="text" asp-for="LastName" name="LastName">
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="Email">Email</label>
-                        <h6 type="text" asp-for="Email" name="Email">@Model.Email</h6>
+                            <input type="text" asp-for="Email" name="Email">
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="Phonenumber">Phone Number</label>
-                        <h6 type="text" asp-for="Phonenumber" name="Phonenumber">@Model.PhoneNumber</h6>
+                            <input type="number" asp-for="PhoneNumber" name="PhoneNumber">
                         </div>
                     </div>
                     <div class="col-sm-12 pt-2">
                         <div class="form-group text-center">
-                            <div>
-                                <a asp-action="Profile" asp-controller="Admin" type="submit" class="edit-icon"> 
-                                    <i  class="ti-pencil"></i>
-                                </a>
-                            </div>
-
+                            <button type="submit">Update</button>
+                            <button type="submit">Back</button>
                         </div>
-            
                     </div>
                 </div>
-         </div>
-    </div>  
-</div>   
+            </form>
+        </div>
+    </div>
+</div>

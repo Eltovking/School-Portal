@@ -156,7 +156,19 @@
 						<a href="#" class="ttr-material-button ttr-submenu-toggle"><span>Profile</span></a>
 						<div class="ttr-header-submenu">
 							<ul>
-								@* <li><a asp-controller="Admin" asp-route-id="@user.Id" asp-action="Profile">My Profile</a></li> *@
+								 @* <li><a asp-controller="User" asp-route-id="@user.Id" asp-action="Profile">My Profile</a></li>  *@
+								@* <li>
+									 <a href="#" class="ttr-material-button">
+										<span class="ttr-icon"><i class="ti-user"></i></span>
+										<span class="ttr-label">Profile</span>
+										<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+									</a> 
+									<ul>
+										<li>
+											<a asp-action="Profile" asp-controller="User" class="ttr-label">My Profile</a>
+										</li>
+									</ul>
+								</li> *@
 								<li><a asp-action="Logout" asp-controller="Account">Logout</a></li>
 							</ul>
 						</div>
@@ -214,7 +226,7 @@
 					</li>
 					<li>
 						<a asp-action="Payment" asp-controller="User" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-book"></i></span>
+							<span class="ttr-icon"><i class="ti-credit-card"></i></span>
 							<span class="ttr-label">Payment</span>
 						</a>
 					</li>
@@ -224,7 +236,26 @@
 							<span class="ttr-label">Course Materials</span>
 						</a>
 					</li>
-			
+					<li>
+						<a asp-action="AnnouncementDetails" asp-controller="User" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-microphone"></i></span>
+							<span class="ttr-label">Announcement</span>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-user"></i></span>
+							<span class="ttr-label">Profile</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a asp-action="ViewProfile" asp-controller="User" class="ttr-label">My Profile</a>
+							</li>
+						</ul>
+					</li>
+					
+
 				    @*  <li>
 						<a href="#" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-email"></i></span>
@@ -276,18 +307,7 @@
 							<span class="ttr-label">Add listing</span>
 						</a>
 					</li>  *@
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-							<span class="ttr-label">Profile</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						@* <ul>
-							<li>
-								<a asp-action="ViewProfile" asp-controller="Admin" class="ttr-label">My Profile</a>
-							</li>
-						</ul> *@
-					</li>
+					
 
 					<li class="ttr-seperate"></li>
 				</ul>

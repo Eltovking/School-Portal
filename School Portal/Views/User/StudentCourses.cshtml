@@ -3,6 +3,30 @@
     ViewData["Title"] = "Courses";
     Layout = "~/Views/Shared/_UserLayout.cshtml";
   }
+@{
+    if (TempData["ErrorMessage"] != null)
+    {
+        <div id="error-alert" class="alert alert-danger custom-alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+}
+<style>
+    .custom-alert {
+        position: fixed;
+        right: 150px; 
+        top: 40px; 
+        width: 300px; 
+        z-index: 1000;
+        padding: 15px;
+        border: 1px solid red;
+        border-radius: 5px;
+        background-color: #f8d7da; 
+        color: #721c24; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
 <main class="ttr-wrapper">
     <div class="container-fluid">
         <div class="db-breadcrumb">
@@ -41,27 +65,26 @@
                                             <h4>@course.Name</h4>
                                         </div>
                                         <div class="card-courses-teacher">
-                                            <h6>Teacher</h6>
-                                            <p>@course.Teacher?.FullName</p>
+                                            @* <h6>Teacher</h6> *@
+                                            @* <p>@course.Teacher?.FullName</p> *@
                                         </div>
-                                        <div class="card-courses-list-bx">
+                                          <div class="card-courses-list-bx">
                                             <ul class="card-courses-view">
-                                                <li class="card-courses-user">Category: @course.CourseCategory?.Name</li>
+                                                 <li class="card-courses-user">Category: @course.CourseCategory?.Name</li>
                                                 <li class="card-courses-price">
-                                                    <h5>₦@course.Price</h5>
+                                                    @* <h5>₦@course.Price</h5> *@
                                                 </li>
                                             </ul>
-                                        </div>
+                                        </div> 
                                         <div class="row card-courses-dec">
                                             <div class="col-md-12">
-                                                <h6 class="m-b10">Course Description</h6>
-                                                <p>@course.Description </p>
-                                            </div>
+                                                @* <h6 class="m-b10">Course Description</h6> *@
+                                              @*   <p>@course.Description. </p> *@
+                                            </div> 
                                             <div class="col-md-12">
-                                                @* here i make a conditional statement to check when the status enum of remove button is clicked then other buttons+ remains to be shown  *@
                                                 <a data-bs-toggle="modal" type="botton" data-bs-target="#ViewMore" class="btn green radius-xl outline" 
                                                 onclick="getCourse(@course.Id)">View more</a>
-                                                <a  class="btn green radius-xl outline" onclick="CoursePayment(@course.Id)">Buy now</a>
+                                                <a asp-action="PaymentForm" asp-controller="User" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Buy now</a>
                                             </div>
                                         </div>
 
@@ -98,3 +121,13 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var alertElement = document.getElementById('error-alert');
+        if (alertElement) {
+            setTimeout(function () {
+                alertElement.style.display = 'none';
+            }, 3000); // 5000 milliseconds = 3 seconds
+        }
+    });
+</script>

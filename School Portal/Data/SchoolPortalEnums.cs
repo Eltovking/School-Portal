@@ -25,6 +25,12 @@ namespace School_Portal.Data
 			Decline = 2,
 			Waiting = 3,
 		}
-	}
+        public enum PaymentStatus
+        {
+            Approve = 1,
+            Decline = 2,
+            Pending = 3,
+        }
+    }
 }
 

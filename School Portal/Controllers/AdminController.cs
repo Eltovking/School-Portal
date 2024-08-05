@@ -27,9 +27,11 @@ namespace School_Portal.Controllers
 			var courseCount = _userHelper.GetCourses().Count();
 			var categoryCount = _userHelper.GetCourseCategories().Count();
 
-			adminDataViewModel.CourseCategoryCount = categoryCount;
+
+            adminDataViewModel.CourseCategoryCount = categoryCount;
 			adminDataViewModel.UserCount = userCount;
 			adminDataViewModel.CousreCount = courseCount;
+
 			return View(adminDataViewModel);
 		}
 		[HttpGet]
@@ -170,9 +172,153 @@ namespace School_Portal.Controllers
             }
             return Json(new { isError = true, msg = "Not found" });
         }
-		public IActionResult Payment()
+        [HttpGet]
+		public IActionResult Payments()
 		{
+			var paymentModels = _userHelper.GetPendingPaymentList();
+			if (paymentModels.Any())
+			{
+				return View(paymentModels);
+			}
 			return View();
 		}
-	}
+        [HttpPost]
+        public JsonResult ApprovedCoursePayment(int id)
+        {
+            if (id < 1)
+            {
+                return Json(new { isError = true, msg = "No course purchased" });
+            }
+            var paidCourse = db.PaymentModels.Where(p => p.Id == id && p.PaymentStatus == SchoolPortalEnums.PaymentStatus.Pending).FirstOrDefault();
+            if (paidCourse != null)
+            {
+                paidCourse.IsApproved = true;
+                paidCourse.IsActive = true;
+
+                paidCourse.PaymentStatus = SchoolPortalEnums.PaymentStatus.Approve;
+                paidCourse.StatusChangeDate = DateTime.Now;
+                db.Update(paidCourse);
+                db.SaveChanges();
+                return Json(new { isError = false, msg = "Approved" });
+            }
+            return Json(new{ isError = true, msg = " Payment Details Not Fount"});
+        }
+        public JsonResult DeclinePayment(int id)
+        {
+            if (id < 1)
+            {
+                return Json(new { isError = true, msg = "No course purchased" });
+            }
+            var paidCourse = db.PaymentModels.Where(p => p.Id == id && p.PaymentStatus == SchoolPortalEnums.PaymentStatus.Pending).FirstOrDefault();
+            if (paidCourse != null)
+            {
+                paidCourse.PaymentStatus = SchoolPortalEnums.PaymentStatus.Decline;
+                paidCourse.StatusChangeDate= DateTime.Now;
+                db.Update(paidCourse);
+                db.SaveChanges();
+                return Json(new { isError = false, msg = "Payment decline successfully" });
+            }
+            return Json(new { isError = true, msg = " Payment Details Not Found" });
+        }
+
+        public IActionResult paymentHistory()
+        {
+            var paymentModels = _userHelper.GetPaymentHistory();
+            if (paymentModels.Any())
+            {
+                return View(paymentModels);
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Announcement()
+        {
+            var listofAnnouncement = _userHelper.ListofAnnouncementForAdmin();
+            return View(listofAnnouncement);
+        }
+
+        public JsonResult CreateAnnouncement(string details)
+        {
+            if (details != null)
+            {
+                var loggedInUser = _userHelper.GetUserByUserName(User.Identity.Name);
+                var announcementDetails = JsonConvert.DeserializeObject<AnnouncementViewModel>(details);
+                if (announcementDetails != null)
+                {
+                    if (announcementDetails.DurationTill < announcementDetails.DurationFrom)
+                    {
+                        return Json(new { isError = true, msg = "Add the correct duration" });
+                    }
+
+                    if (announcementDetails.Description == "")
+                    {
+                        return Json(new { isError = true, msg = "Please add announcement detail" });
+                    }
+
+                    if (announcementDetails.Title == "")
+                    {
+                        return Json(new { isError = true, msg = "Please add announcement Title" });
+                    }
+
+                    var announcement = _userHelper.AddAnnouncements(announcementDetails, loggedInUser);
+                    if (announcement)
+                    {
+                        return Json(new { isError = false, msg = "Announcement added successfully" });
+                    }
+                    return Json(new { isError = true, msg = "Unable to add " });
+                }
+            }
+            return Json(new { isError = true, msg = "Network Failure" });
+        }
+
+        public JsonResult GetAnnounceToEdit(int id)
+        {
+            if (id > 0)
+            {
+                var currentAnnouncement = _userHelper.GetAnnouncement(id);
+                if (currentAnnouncement != null)
+                {
+                    return Json(currentAnnouncement);
+                }
+                return Json(new { isError = true, msg = " Could not get Annoucement" });
+            }
+            return Json(new { isError = true, msg = "Network Failure" });
+        }
+
+        public JsonResult SaveEditedAnnouncement(string announcedetails)
+        {
+            if (announcedetails != null)
+            {
+                var loggedInUser = _userHelper.GetUserByUserName(User.Identity.Name);
+                var announcementDetails = JsonConvert.DeserializeObject<AnnouncementViewModel>(announcedetails);
+                if (announcementDetails != null)
+                {
+                    if (announcementDetails.DurationTill < announcementDetails.DurationFrom)
+                    {
+                        return Json(new { isError = true, msg = "Add the correct durations" });
+                    }
+                    var editannouncement = _userHelper.EditAnnouncement(announcementDetails, loggedInUser);
+                    if (editannouncement)
+                    {
+                        return Json(new { isError = false, msg = "Announcement Edited successfully" });
+                    }
+                    return Json(new { isError = true, msg = "Unable to Edit " });
+                }
+            }
+            return Json(new { isError = true, msg = "Network Failure" });
+        }
+        public JsonResult DelAnnounce(int id)
+        {
+            if (id > 0)
+            {
+                var delete = _userHelper.DeleteAnnounce(id);
+                if (delete)
+                {
+                    return Json(new { isError = false, msg = "Announcement Deleted sucessfully" });
+                }
+            }
+            return Json(new { isError = true, msg = "Announcement not found" });
+        }
+    }
 }
