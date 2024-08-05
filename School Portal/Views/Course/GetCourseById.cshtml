@@ -10,7 +10,7 @@
         <div class="">
             <div class="row">
                 <div class="col-12 mt-4">
-                    <img src="@Model.Image" />
+                    <img src="@Model.Image"/>
                 </div>
             </div>
             <div class="col-6 text-center mt-3" style="margin-left:20%">
@@ -22,16 +22,16 @@
                 </div>
                
                 <div class="col-6">
-                    <p>CourseCategory: <span id="CourseCategory">@Model.CourseCategory</span></p>
+                    <p>CourseCategory: <span id="CourseCategory">@Model?.CourseCategory?.Name</span></p>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-6">
-                    <p>Teacher: <span id="Teacher">@Model.Teacher</span></p>
+                    <p>Teacher: <span id="Teacher">@Model?.Teacher?.FullName</span></p>
                 </div>
                 <div class="col-6">
-                    <p>Description: <span id="Description">@Model.Description</span></p>
+                    <p>Description: <span id="Description">@Model?.Description</span></p>
                 </div>
             </div>
         </div>

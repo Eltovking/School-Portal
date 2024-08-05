@@ -1,0 +1,49 @@
+﻿@model IEnumerable<School_Portal.ViewModels.AnnouncementViewModel>
+@{
+    ViewData["Title"] = "Announcement";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<main id="main" class="main">
+   @*  <div class="pagetitle">
+        <h1>Announcements</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="">Home</a></li>
+                <li class="breadcrumb-item active">Announcements</li>
+
+            </ol>
+        </nav>
+    </div><!-- End Page Title --> *@
+
+    <div class="container mt-10">
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                @if (Model != null && Model.Count() > 0)
+                {
+                    <h2 class="text-center mt-5 mb-5 font-weight-bold">Announcements</h2>
+
+                    @foreach (var announcements in Model)
+                    {
+                        <div class="col-lg-10 col-sm-12">
+
+                            <div class="card mb-4" style="width:100%">
+                                <div class="card-body">
+                                    <h4 class="card-title font-weight-bold">@announcements.Title</h4>
+                                    <p>@announcements.Description</p>
+                                    <div>
+                                        This announcement will be available from <span><b>@announcements.DurationFrom.ToString("D")</b></span> to
+                                        <span><b>@announcements.DurationTill.ToString("D")</b></span>
+                                        @* <span class="float-lg-end">@announcements.Id</span> *@
+                                    </div>
+                                    @* <p class="card-text">@announcements.DateCreated</p> *@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</main>

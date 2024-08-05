@@ -8,6 +8,7 @@ namespace School_Portal.ViewModels
     {
         public int? CategoryId { get; set; }
         public int Id { get; set; }
+        public string? CourseMaterials { get; set; }
         public string? CategoryName { get; set; }
         public int Price { get; set; }
         public string? Name { get; set; }

@@ -1,24 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static School_Portal.Data.SchoolPortalEnums;
 
 namespace School_Portal.Models
 {
     public class PaymentModel : BaseModel
     {
+        public bool? IsApproved { get; set; } = false;
+
+        public PaymentStatus? PaymentStatus { get; set; }
+
+        public string? BankPaidFrom { get; set; } = string.Empty;
+
+        public DateTime? StatusChangeDate { get; set; } = DateTime.MinValue;
+
+        public string? PaymentMethod { get; set; } = string.Empty;
 
         public int CourseId { get; set; }
-        [ForeignKey(nameof(CourseId))]
+        [ForeignKey("CourseId")]
         public virtual Course? Course { get; set; }
-        public string? StudentId { get; set; }
-        [ForeignKey(nameof(StudentId))]
-        public virtual ApplicationUser? Student { get; set; }
-        public bool IsApproved { get; set; }
 
+        public string? StudentId { get; set; } = string.Empty;
+        [ForeignKey("StudentId")]
+        public virtual ApplicationUser? Student { get; set; }         
     }
-    public class GenericResponse
-    {
-        public string? Message { get; set; }
-        public bool IsError { get; set; }
-        public object? Data { get; set; }
-    }
+
+   
 }

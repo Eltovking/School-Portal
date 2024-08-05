@@ -26,7 +26,18 @@ namespace School_Portal.Iservices
 		bool UpdateProfile(ApplicationUser applicationUserFromForm, string userName);
 		Task<ApplicationUser> CreateAdminDetails(ApplicationViewModel userModel);
         Course GetCourse(int courseId);
-        GenericResponse IntiateCoursePayment(int courseId, string username);
-        public List<PaymentViewModel> GetPaymentList(string userId);
-    }
+        GenericResponse IntiateCoursePayment(PaymentViewModel paymentViewModel, string username);
+        Task<List<PaymentViewModel>> GetLoggedInUserPaymentList(string userId);
+        public List<PaymentViewModel> GetPendingPaymentList();
+        bool SavePayment(PaymentViewModel pay);
+        public List<Course> GetCoursesDropDown();
+        public List<PaymentViewModel> GetPaymentHistory();
+        bool AddAnnouncements(AnnouncementViewModel announcenent, ApplicationUser loggedInUser);
+        public List<AnnouncementViewModel> ListofAnnouncementForAdmin();
+        public AnnouncementViewModel GetAnnouncement(int id);
+        bool EditAnnouncement(AnnouncementViewModel announcementdetails, ApplicationUser loggedInUser);
+        bool DeleteAnnounce(int id);
+        public List<AnnouncementViewModel> ListofAnnouncement();
+		
+	}
 }

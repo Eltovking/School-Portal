@@ -1,11 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using iText.Forms.Form.Element;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using School_Portal.Data;
 using School_Portal.Iservices;
 using School_Portal.Models;
 using School_Portal.ViewModels;
+using System.Reflection.PortableExecutable;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace School_Portal.Controllers
@@ -38,11 +44,13 @@ namespace School_Portal.Controllers
             return View();
         }
 
-        [HttpPost] 
+        [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> AddCourse(CourseViewModel data)       
         {
             var imageDataUrl = "";
-
+            var pdfString = await ExtractTextFromPdf(data.CourseMaterials!);
+            var imageString = await ExtractTextFromPdf(data.Image!);
             if (data.Image != null)
             {
                 using (var memoryStream = new MemoryStream())
@@ -57,7 +65,8 @@ namespace School_Portal.Controllers
                 //here i instantiate a new class called course and then start mapping data from courseViewModel into the new course
                 Course dimma = new Course();
                 dimma.Name = data.Name;
-                dimma.Image = imageDataUrl;
+                dimma.Image = $"data:{data.Image.ContentType};base64,{imageString}";
+                dimma.CourseMaterials = $"data:{data.CourseMaterials.ContentType};base64,{pdfString}";
                 dimma.Price = data.Price;
                 dimma.TeacherId = data.TeacherId;
                 dimma.Description = data.Description;
@@ -75,35 +84,45 @@ namespace School_Portal.Controllers
             }
                  return View();
 		}
-       
-  //      public IActionResult GetCourses()
-  //      {
-		//	List<Course> courseList = _db.Courses.ToList();
 
-		//	if (courseList.Count() > 0)
-		//	{
-		//		return View();
-		//	}
-  //          return View();
+        public static async Task<string> ExtractTextFromPdf(IFormFile formFile)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(memoryStream);
+                var fileBytes = memoryStream.ToArray();
+                return Convert.ToBase64String(fileBytes);
+            }
+        }
 
-		//}
-       
-		//public IActionResult GetCoursesFrom()
-		//{
-           
-		//	List<Course> courseList = _db.Courses.ToList();
+        //      public IActionResult GetCourses()
+        //      {
+        //	List<Course> courseList = _db.Courses.ToList();
 
-  //          if (courseList.Count() > 0)
-  //          {
-  //              return RedirectToAction("GetCourses");
-  //          }
-  //          else 
-  //          { 
-  //              //handle what happens here
-                
-  //          }    
-		//	return View();
-		//}
+        //	if (courseList.Count() > 0)
+        //	{
+        //		return View();
+        //	}
+        //          return View();
+
+        //}
+
+        //public IActionResult GetCoursesFrom()
+        //{
+
+        //	List<Course> courseList = _db.Courses.ToList();
+
+        //          if (courseList.Count() > 0)
+        //          {
+        //              return RedirectToAction("GetCourses");
+        //          }
+        //          else 
+        //          { 
+        //              //handle what happens here
+
+        //          }    
+        //	return View();
+        //}
         // Here we do a check for possible error 
         public IActionResult ApproveCourse(int courseId)
         {
@@ -161,6 +180,7 @@ namespace School_Portal.Controllers
                 courseViewModel.Price = course.Price;
                 courseViewModel.Image = course.Image;
                 courseViewModel.CategoryId = course.Id;
+                courseViewModel.CourseMaterials = course.CourseMaterials;
                 courseViewModel.Name = course.Name;
                 courseViewModel.TeacherId = course.TeacherId;
 
@@ -249,17 +269,29 @@ namespace School_Portal.Controllers
                 throw exp;
             }
         }
-        public IActionResult IntiateCoursePayment(int id)
+        public IActionResult IntiateCoursePayment(string userData)
         {
             try
             {
-                if (id> 0)
+                if (userData != null)
                 {
-                    var coursedetail = _userHelper.IntiateCoursePayment(id,User.Identity.Name);
-                   
-                      return Json(new { isError = coursedetail.IsError, msg = coursedetail.Message });
+					var paymentModel = JsonConvert.DeserializeObject<PaymentViewModel>(userData);
+                    if (paymentModel != null)
+                    {
+						var coursedetail = _userHelper.IntiateCoursePayment(paymentModel, User.Identity.Name);
+                        if (coursedetail != null)
+                        {
+							return Json(new 
+
+                            {  isError = false, 
+
+                                msg = "Payment successfully"
+                            });
+						}
+					}
+					return Json(new { isError = true, msg = "payment failed" });
                 }
-                return Json(new { isError = true, msg = "payment failed" });
+                return Json(new { isError = true, msg = "it's null" });
             }
             catch (Exception exp)
             {
