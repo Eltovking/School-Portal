@@ -38,7 +38,7 @@ namespace School_Portal.Controllers
 		public IActionResult StudentCourses()
 		{
             var courses = db.Courses
-               .Where(x => x.Name != null && x.IsActive && x.Status == CourseStatus.Approve)
+               .Where(x => x.Name != null && x.IsActive && x.Status == CourseStatus.Approved)
                .Include(v => v.CourseCategory)
                .Include(y => y.Teacher)
                .ToList();

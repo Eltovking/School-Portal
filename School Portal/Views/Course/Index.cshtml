@@ -69,16 +69,14 @@
                                             </div>
                                             <div class="col-md-12">
                                                  @* here i make a conditional statement to check when the status enum of remove button is clicked then other buttons+ remains to be shown  *@
-                                                @if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Remove)
+                                                @if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Declined)
                                                 {
                                                     <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
                                                     <a asp-controller="Course" asp-action="DeleteCourse" asp-route-courseId="@course.Id" class="btn red outline radius-xl">Delete</a>
-                                                    <a asp-controller="Course" asp-action="ApproveCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Approve</a>
-                                                }else if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Approve)
+                                                }else if(course.Status == School_Portal.Data.SchoolPortalEnums.CourseStatus.Approved)
                                                 {
                                                     <a asp-controller="Course" asp-action="EditCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Edit</a>
                                                     <a asp-controller="Course" asp-action="DeleteCourse" asp-route-courseId="@course.Id" class="btn green radius-xl outline">Delete</a>
-                                                    <a asp-controller="Course" asp-action="RemoveCourse" asp-route-courseId="@course.Id" class="btn red outline radius-xl ">Decline</a>
                                                 }
                                                 else
                                                 {

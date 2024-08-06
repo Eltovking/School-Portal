@@ -118,7 +118,7 @@ namespace School_Portal.Services
 				var course = db.Courses.Where(y => y.Id == courseId && y.IsActive).FirstOrDefault();
 				if(course != null)
 				{
-					course.Status = CourseStatus.Approve;
+					course.Status = CourseStatus.Approved;
 					db.Update(course);
 					db.SaveChanges();
 					return true;
@@ -134,7 +134,7 @@ namespace School_Portal.Services
 				var course = db.Courses.Where(x => x.Id == courseId && x.IsActive).FirstOrDefault();
 				if(course != null)
 				{
-					course.Status = CourseStatus.Remove;
+					course.Status = CourseStatus.Declined;
 					db.Update(course);
 					db.SaveChanges();
 					return true;
@@ -147,7 +147,7 @@ namespace School_Portal.Services
 			var homeData = new HomeViewModel();
             homeData.Courses = db.Courses
 				.Where(x => x.IsActive && x.Id != 0 && (x.Image != "" || x.Image != null) 
-				&& x.CategoryId != null && x.Status == CourseStatus.Approve)
+				&& x.CategoryId != null && x.Status == CourseStatus.Approved)
 				.Include(w => w.CourseCategory)
 				.OrderByDescending(x=>x.CreatedDate)
 				.Select(course => new CourseViewModelEdit

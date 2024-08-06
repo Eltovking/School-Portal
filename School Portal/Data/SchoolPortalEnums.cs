@@ -9,8 +9,8 @@ namespace School_Portal.Data
 	{
 		public enum CourseStatus
 		{
-			Approve = 1,	
-			Remove = 2,
+			Approved = 1,	
+			Declined = 2,
 		}
 
 		public enum CourseType { 

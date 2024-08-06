@@ -46,7 +46,19 @@ namespace School_Portal.Controllers
 			}
             return View();
 		}
-        [HttpPost]
+
+		public IActionResult ViewProfile()
+		{
+			string? currentLoggedInUsername = User?.Identity?.Name;
+
+			var user = _userHelper.GetUserByUserName(currentLoggedInUsername);
+			if (user != null)
+			{
+				return View(user);
+			}
+			return View();
+		}
+		[HttpPost]
 		public IActionResult Profile(ApplicationUser UserDetail)
 		{
 			if (UserDetail == null)
@@ -67,17 +79,17 @@ namespace School_Portal.Controllers
 		}
 
         [HttpGet]
-        public IActionResult ViewProfile()
-        {
-            string? currentLoggedInUsername = User?.Identity?.Name;
+        //public IActionResult ViewProfile()
+        //{
+        //    string? currentLoggedInUsername = User?.Identity?.Name;
 
-            var user = _userHelper.GetUserByUserName(currentLoggedInUsername);
-            if (user != null)
-            {
-                return View(user);
-            }
-            return View();
-        }
+        //    var user = _userHelper.GetUserByUserName(currentLoggedInUsername);
+        //    if (user != null)
+        //    {
+        //        return View(user);
+        //    }
+        //    return View();
+        //}
 
 
 		[HttpGet]

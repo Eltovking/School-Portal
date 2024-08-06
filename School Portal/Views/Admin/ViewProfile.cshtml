@@ -2,16 +2,16 @@
 
 @{
     ViewData["Title"] = "ViewProfile";
-}
-@if (User.IsInRole("Admin"))
-{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+@* @if (User.IsInRole("Admin"))
+{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 else
 {
     Layout = "~/Views/Shared/_UserLayout.cshtml";
-}
+} *@
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -93,8 +93,8 @@ else
                     <div class="col-sm-12 pt-2">
                         <div class="form-group text-center">
                             <div>
-                                <a asp-action="Profile" asp-controller="Admin" type="submit" class="edit-icon"> 
-                                    <i  class="ti-pencil"></i>
+                            <a asp-action="Profile" asp-controller="Admin" type="submit" class="edit-icon">
+                                <i  class="ti-pencil"></i>
                                 </a>
                             </div>
 
