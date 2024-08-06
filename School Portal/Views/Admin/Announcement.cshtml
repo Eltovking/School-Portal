@@ -173,25 +173,22 @@
             </div>
         </div>
     </div>
-
-<div class="modal fade" id="announcementToDelete" tabindex="-1">
+<div class="modal custom-modal fade" id="announcementToDelete" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-center"> <b> Delete Announcement </b> </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <div class="modal-body">
-                <p class="text-auto">Are you sure you want to delete?</p>
+                <button type="button" class="btn-close float-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="form-header text-center">
+                    <h5>Delete Announcement</h5>
+
+                    <input class="form-control" type="text" id="deleteAnnouce_Id" hidden>
+                    <p class="text-center">Are you sure you want to delete?</p>
+                </div>
                 <div class="modal-btn delete-action">
-                    <div class="row m-auto">
-                        <input class="form-control" hidden type="text" id="deleteAnnouce_Id">
-                        <div class="col-6">
-                            <a class="btn btn-outline-success rounded-pill p-2 d-block" style="margin-left :auto" onclick="DeleteAnnounce()">Delete</a>
+                    <div class="row">
+                        <div class="col-6" style="padding-left:40%;">
+                            <a href="javascript:void(0);" class="btn btn-danger continue-btn" onclick="DeleteAnnounce()">Delete</a>
                         </div>
-                        <div class="col-6">
-                             <a data-dismiss="modal" id="close-button" class="btn btn-outline rounded-pill p-2 d-block">Cancel</a> 
-                        </div> 
                     </div>
                 </div>
             </div>

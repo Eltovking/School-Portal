@@ -201,20 +201,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <div class="form-header">
-                    <h3>Delete Teacher details</h3>
+                <button type="button" class="btn-close float-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="form-header text-center">
+                    <h5>Delete Teacher details</h5>
+                    
                     <input class="form-control" type="text" id="deleteId" hidden>
-                    <p>Are you sure you want to delete?</p>
+                    <p class="text-center">Are you sure you want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
-                        <div class="col-6" style="padding-left:20%;">
+                        <div class="col-6" style="padding-left:40%;">
                             <a href="javascript:void(0);" class="btn btn-danger continue-btn" onclick="deleteTeacherById()">Delete</a>
                         </div>
-                        <div class="col-6" style="padding-left:10%;">
-                            <a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
-                        </div>
-                    </div>
+                       </div>
                 </div>
             </div>
         </div>

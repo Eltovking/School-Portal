@@ -261,8 +261,46 @@ namespace School_Portal.Services
            return null;
         }
 
-
 		public async Task<ApplicationUser> CreateStudentDetails(ApplicationViewModel userModel)
+		{
+			try
+			{
+				var user = new ApplicationUser();
+				user.UserName = userModel.Email;
+				user.Email = userModel.Email;
+				user.FirstName = userModel.FirstName;
+				user.LastName = userModel.LastName;
+				user.PhoneNumber = userModel.PhoneNumber;
+				user.DateRegistered = DateTime.Now;
+				user.Address = userModel.Address;
+				user.IsDeactiveted = false;
+				user.RoleName = "User";
+				user.DOB = userModel.DOB;
+				user.StateOfOrigin = userModel.StateOfOrigin;
+
+				var createdUser = await _userManager.CreateAsync(user, userModel.Password).ConfigureAwait(false);
+
+				if (createdUser.Succeeded)
+				{
+					var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+					if (roleResult.Succeeded)
+					{
+						return user;
+					}
+
+					return user;
+				}
+				
+				return null;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("An error occurred while creating the user.", ex);
+			}
+		}
+
+		public async Task<ApplicationUser> CreateStudentDetailss(ApplicationViewModel userModel)
 		{
 			var user = new ApplicationUser();
 			user.UserName = userModel.Email;
@@ -277,9 +315,16 @@ namespace School_Portal.Services
 			user.DOB = userModel.DOB;
 			user.StateOfOrigin = userModel.StateOfOrigin;
 			var createdUser = await _userManager.CreateAsync(user, userModel.Password).ConfigureAwait(false);
+
 			if (createdUser.Succeeded)
 			{
-				await _userManager.AddToRoleAsync(user, "User");
+				var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+				if (roleResult.Succeeded)
+				{
+					return user;
+				}
+
 				return user;
 			}
 			return null;
