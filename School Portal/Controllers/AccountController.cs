@@ -69,7 +69,7 @@ namespace School_Portal.Controllers
                 var checkForEmail = await _userHelper.FindByEmailAsync(applicationUser.Email).ConfigureAwait(false);
                 if (checkForEmail != null)
                 {
-                    return Json(new { isError = true, msg = "Email already exists" });
+                    return Json(new { isError = true, msg = "The email you entered is already in use.Please try logging in. " });
                 }
                 var createStaff = await _userHelper.CreateAdminDetails(applicationUser).ConfigureAwait(false);
                 if (createStaff != null)
@@ -83,6 +83,7 @@ namespace School_Portal.Controllers
 		[HttpPost]
 		public async Task<JsonResult> RegisterStudent(string userDetails)
 		{
+
 			if (userDetails == null)
 			{
 				return Json(new { isError = true, msg = "Your information is required" });
@@ -93,7 +94,7 @@ namespace School_Portal.Controllers
 				var checkForEmail = await _userHelper.FindByEmailAsync(applicationUser.Email).ConfigureAwait(false);
 				if (checkForEmail != null)
 				{
-					return Json(new { isError = true, msg = "Email already exists" });
+					return Json(new { isError = true, msg = "The email you entered is already in use.Please try logging in." });
 				}
 				var createStudent = await _userHelper.CreateStudentDetails(applicationUser).ConfigureAwait(false);
 				if (createStudent != null)

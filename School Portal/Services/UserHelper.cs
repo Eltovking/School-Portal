@@ -64,13 +64,13 @@ namespace School_Portal.Services
 		public List<CourseCategory> GetCourseCategories()
 		{
 			var courses = new List<CourseCategory>();
-			var defaultVaule = new CourseCategory
-			{
-				Id = 0,
-				Name = "Select Category"
-			};
+			//var defaultVaule = new CourseCategory
+			//{
+			//	Id = 0,
+			//	Name = "Select Category"
+			//};
             courses = db.CourseCategories.Where(s => s.Id > 0 && s.IsActive == true).ToList();
-			courses.Insert(0, defaultVaule);
+			//courses.Insert(0, defaultVaule);
 			return courses;
 		}
 
@@ -659,7 +659,8 @@ namespace School_Portal.Services
         public List<AnnouncementViewModel> ListofAnnouncement()
         {
             var announcementViewModel = new List<AnnouncementViewModel>();
-            announcementViewModel = db.Announcements.Where(a => a.Id > 0 && a.IsActive && !a.IsDeleted && DateTime.Now.Date <= a.DurationTill.Date)
+            announcementViewModel = db.Announcements.Where(a => a.Id > 0 && a.IsActive && !a.IsDeleted 
+			&& DateTime.Now.Date <= a.DurationTill.Date && DateTime.Now.Date >= a.DurationFrom.Date)
             .Select(a => new AnnouncementViewModel()
             {
                 Title = a.Title,
