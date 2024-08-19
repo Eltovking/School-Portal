@@ -83,7 +83,6 @@ namespace School_Portal.Services
 				FirstName = "Select"
 			};
 			//courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
-
             courses = db.ApplicationUser.Where(s => s.Id != null && s.RoleName == "Teacher" && !s.IsDeactiveted).ToList();
             courses.Insert(0, defaultVaule);
 			return courses;
@@ -444,7 +443,7 @@ namespace School_Portal.Services
             }
             return null;
         } 
-		public GenericResponse IntiateCoursePayment(PaymentViewModel paymentViewModel, string username)
+		public GenericResponse IntiateCoursePayment(PaymentViewModel paymentViewModel, string username, string base64)
         {
 			var result = new GenericResponse();
 
@@ -467,6 +466,7 @@ namespace School_Portal.Services
 				payment.PaymentMethod = paymentViewModel.PaymentMethod;
 				payment.PaymentStatus = PaymentStatus.Pending;
 				payment.IsActive = true;
+				payment.Image = base64;
 				db.Add(payment);
                 db.SaveChanges();
 				result.Message = "payment submitted successfully";
@@ -516,7 +516,7 @@ namespace School_Portal.Services
 			List<PaymentViewModel> paymentViewModels = new List<PaymentViewModel>();
 			var pendingPayments = db.PaymentModels.Where(x => x.IsActive && x.PaymentStatus == PaymentStatus.Pending).Include(x => x.Course).Include(x => x.Student).ToList();
 
-			paymentViewModels = pendingPayments.Select(x => new PaymentViewModel
+            paymentViewModels = pendingPayments.Select(x => new PaymentViewModel
 
 			{
 				Id = x.Id,
@@ -526,6 +526,8 @@ namespace School_Portal.Services
 				IsActive = x.IsActive,
 				IsApproved = x.IsApproved,
 				StudentName = x.Student?.FullName,
+                Imageurl = x.Image != null ? $"data:image/jpg;base64,{x.Image}" : null,
+
 			}).ToList();
 
 			return paymentViewModels;

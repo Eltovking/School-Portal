@@ -34,8 +34,9 @@
                 <thead>
                     <tr>
                         <th>S/N</th>
-                        <th>StudentName</th>
-                        <th>CourseName</th>
+                        <th>Student Name</th>
+                        <th>Course Name</th>
+                        <th>Prove</th>
                         <th>Price</th>
                         <th>Created Date</th>
 
@@ -51,6 +52,20 @@
                                 <td></td>
                                 <td>@payment.StudentName</td>
                                 <td>@payment.CourseName</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(payment.Imageurl))
+                                    {
+                                        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/..." alt="Test Image" style="width:100px;height:auto;" />
+
+                                        <img src="@payment.Imageurl" alt="Payment Image" style="width: 100px; height: auto;" />
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            No image available
+                                        </p>
+                                    }
+                                </td>
                                 <td>@payment.CoursePrice</td>
                                 <td>@payment.CreatedDate.ToString("D")</td>
                                 <td>

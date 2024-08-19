@@ -12,6 +12,7 @@ namespace School_Portal.ViewModels
         public int? CoursePrice { get; set; }
         public int Id { get; set; }
 		public IFormFile? Image { get; set; }
+		public string? Imageurl { get; set; }
 		public string? Name { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public bool IsActive { get; set; }

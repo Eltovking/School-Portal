@@ -269,7 +269,7 @@ namespace School_Portal.Controllers
                 throw exp;
             }
         }
-        public IActionResult IntiateCoursePayment(string userData)
+        public IActionResult IntiateCoursePayment(string userData, string base64)
         {
             try
             {
@@ -278,7 +278,7 @@ namespace School_Portal.Controllers
 					var paymentModel = JsonConvert.DeserializeObject<PaymentViewModel>(userData);
                     if (paymentModel != null)
                     {
-						var coursedetail = _userHelper.IntiateCoursePayment(paymentModel, User.Identity.Name);
+						var coursedetail = _userHelper.IntiateCoursePayment(paymentModel, User.Identity.Name, base64);
                         if (coursedetail != null)
                         {
 							return Json(new 

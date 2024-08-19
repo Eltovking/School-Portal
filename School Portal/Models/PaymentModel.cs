@@ -15,6 +15,7 @@ namespace School_Portal.Models
         public DateTime? StatusChangeDate { get; set; } = DateTime.MinValue;
 
         public string? PaymentMethod { get; set; } = string.Empty;
+     
 
         public int CourseId { get; set; }
         [ForeignKey("CourseId")]
@@ -22,7 +23,8 @@ namespace School_Portal.Models
 
         public string? StudentId { get; set; } = string.Empty;
         [ForeignKey("StudentId")]
-        public virtual ApplicationUser? Student { get; set; }         
+        public virtual ApplicationUser? Student { get; set; }
+        public string? Image { get; set; }
     }
 
    

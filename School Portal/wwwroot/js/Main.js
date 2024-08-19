@@ -387,35 +387,40 @@ function getCourse(CourseId) {
 }
 function CoursePayment() {
     debugger;
-    var data = {} ;
+    const image = document.getElementById("proveOfPayment").files;
+    var data = {};
     data.CourseId = $('#courseId').val();
     data.PaymentMethod = $('#paymentMethod').val();
     data.BankPaidFrom = $('#bankPaidFrom').val();
+    let reader = new FileReader();
+    var base64;
     var userData = JSON.stringify(data);
-    if (data.CourseId != ""
-        && data.BankPaidFrom != ""
-        && data.PaymentMethod != "") {
-        $.ajax({
-            type: 'Post',
-            dataType: 'json',
-            url: '/Course/IntiateCoursePayment',
-            data:
-            {
-                userData: userData,
-            },
-            success: function (result)
-            {
-                debugger;
-                if (!result.isError)
-                {
-                    successAlertWithRedirect(result.msg, '/User/Index')
-                }
-                else
-                {
-                    errorAlert(result.msg)
-                }
-            },
-        });
+    if (image.length > 0) {
+        reader.readAsDataURL(image[0]);
+        reader.onload = function () {
+            base64 = reader.result;
+            if (data.CourseId != "" && data.BankPaidFrom != "" && data.PaymentMethod != "") {
+                $.ajax({
+                    type: 'Post',
+                    dataType: 'json',
+                    url: '/Course/IntiateCoursePayment',
+                    data:
+                    {
+                        userData: userData,
+                        base64: base64
+                    },
+                    success: function (result) {
+                        debugger;
+                        if (!result.isError) {
+                            successAlertWithRedirect(result.msg, '/User/Index')
+                        }
+                        else {
+                            errorAlert(result.msg)
+                        }
+                    },
+                });
+            }
+        }       
     }  
 }
 
