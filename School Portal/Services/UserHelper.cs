@@ -64,13 +64,13 @@ namespace School_Portal.Services
 		public List<CourseCategory> GetCourseCategories()
 		{
 			var courses = new List<CourseCategory>();
-			//var defaultVaule = new CourseCategory
-			//{
-			//	Id = 0,
-			//	Name = "Select Category"
-			//};
+			var defaultVaule = new CourseCategory
+			{
+				Id = 0,
+				Name = "Select Category"
+			};
             courses = db.CourseCategories.Where(s => s.Id > 0 && s.IsActive == true).ToList();
-			//courses.Insert(0, defaultVaule);
+			courses.Insert(0, defaultVaule);
 			return courses;
 		}
 
@@ -80,7 +80,7 @@ namespace School_Portal.Services
 			var defaultVaule = new ApplicationUser
 			{
 				Id = "",
-				FirstName = "Select"
+				FirstName = "select",
 			};
 			//courses = db.ApplicationUser.Where(s => s.Id != null && s.IsDeactiveted == false && s.RoleName == "Teacher").ToList();
             courses = db.ApplicationUser.Where(s => s.Id != null && s.RoleName == "Teacher" && !s.IsDeactiveted).ToList();
@@ -446,7 +446,6 @@ namespace School_Portal.Services
 		public GenericResponse IntiateCoursePayment(PaymentViewModel paymentViewModel, string username, string base64)
         {
 			var result = new GenericResponse();
-
             var user = GetUserByUserName(username);
 			var checkUserPaidCourse = db.PaymentModels.Where(p => p.StudentId == user.Id && p.CourseId == paymentViewModel.CourseId && p.PaymentStatus == PaymentStatus.Pending).Any();// check if user have alerady pay this course previously using username and courseid
 			if (checkUserPaidCourse)
@@ -526,9 +525,9 @@ namespace School_Portal.Services
 				IsActive = x.IsActive,
 				IsApproved = x.IsApproved,
 				StudentName = x.Student?.FullName,
-                Imageurl = x.Image != null ? $"data:image/jpg;base64,{x.Image}" : null,
-
-			}).ToList();
+                Imageurl = x?.Image,
+            
+            }).ToList();
 
 			return paymentViewModels;
 		}

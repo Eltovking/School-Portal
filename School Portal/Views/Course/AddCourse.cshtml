@@ -54,6 +54,11 @@
             color: black !important;
             display: block !important;
         }
+
+        ul.dropdown-menu li[data-original-index="0"] {
+            display: none;
+        }
+       
         
     </style>
 </head>
@@ -89,8 +94,7 @@
                         <div class="col-sm-4">
                             <div class="form-group" style="margin-bottom: 20px;">
                                 <label for="Category" style="font-size: 1.2em;">Category</label>
-                                <select asp-for="CategoryId" name="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control select" style="width: 100%; padding: 10px; font-size: 1.2em;" required >
-                                 Select
+                                <select asp-for="CategoryId" name="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control" style="width: 100%; padding: 10px; font-size: 1.2em;" required >
                                 </select>
                             </div>
                         </div>
@@ -127,3 +131,12 @@
 
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('ul.dropdown-menu li[data-original-index="0"]').hide();
+       
+    });
+
+</script>

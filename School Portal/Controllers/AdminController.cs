@@ -188,7 +188,9 @@ namespace School_Portal.Controllers
 		public IActionResult Payments()
 		{
 			var paymentModels = _userHelper.GetPendingPaymentList();
-			if (paymentModels.Any())
+            var base64Image = paymentModels.Select(i => i.Imageurl);
+            ViewBag.Base64Image = base64Image;
+            if (paymentModels.Any())
 			{
 				return View(paymentModels);
 			}
@@ -242,6 +244,7 @@ namespace School_Portal.Controllers
             }
             return View();
         }
+        
 
         [HttpGet]
         public IActionResult Announcement()

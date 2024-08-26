@@ -55,9 +55,9 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(payment.Imageurl))
                                     {
-                                        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/..." alt="Test Image" style="width:100px;height:auto;" />
+                                        @* <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/..." alt="Test Image" style="width:100px;height:auto;" /> *@
 
-                                        <img src="@payment.Imageurl" alt="Payment Image" style="width: 100px; height: auto;" />
+                                        <img src="@payment.Imageurl" alt="Course Image" style="max-width: 50px; height: auto;" />
                                     }
                                     else
                                     {
